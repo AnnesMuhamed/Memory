@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Red+Rose:wght@700&display=swap");
+
+:root {
+    --font-title: "Red Rose", serif;
+    --font-subtitle: "Almarai", sans-serif;
+    --font-body: "Almarai", sans-serif;
+    --color-bg: #2f3131;
+    --color-text: #ffffff;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+.home-screen {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    isolation: isolate;
+
+    &__controller {
+        position: absolute;
+        left: -48px;
+        bottom: -36px;
+        width: clamp(230px, 28vw, 370px);
+        max-width: 45vw;
+        pointer-events: none;
+        user-select: none;
+    }
+}
+
+.home-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin-left: clamp(16px, 9vw, 150px);
+    gap: clamp(12px, 2vw, 22px);
+
+    &__subtitle {
+        margin: 0;
+        width: min(100%, 265px);
+        height: 54px;
+        font-family: var(--font-subtitle);
+        font-weight: 400;
+        font-size: 48px;
+        line-height: 100%;
+        color: #ffffff;
+    }
+
+    &__title {
+        margin: 0;
+        width: min(100%, 991px);
+        min-height: 175px;
+        font-family: var(--font-title);
+        font-size: 140px;
+        font-weight: 700;
+        line-height: 100%;
+        color: #ffffff;
+        text-align: center;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+    }
+}
+
+.play-button {
+    align-self: center;
+    margin-top: clamp(8px, 2vw, 22px);
+    width: 270px;
+    height: 102px;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    background: url("/images/cards/play.svg") center / contain no-repeat;
+    background-color: transparent;
+    transition: transform 180ms ease, filter 180ms ease;
+
+    &:hover {
+        background-image: url("/images/cards/play_hoveer.svg");
+        transform: translateY(-1px);
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.25));
+    }
+
+    &:focus-visible {
+        outline: 3px solid #f0ea6e;
+        outline-offset: 4px;
+    }
+}
+
+@media (max-width: 900px) {
+    .home-content {
+        margin-left: 0;
+
+        &__subtitle {
+            font-size: 36px;
+            width: auto;
+            height: auto;
+        }
+
+        &__title {
+            font-size: 68px;
+            width: auto;
+            min-height: 0;
+        }
+    }
+
+    .play-button {
+        width: 230px;
+        height: 87px;
+    }
+}
