@@ -129,7 +129,40 @@
         </div>
     </section>
 
-    <section class="game-screen hidden" id="game-screen" aria-label="Game"></section>
+    <section class="game-screen hidden" id="game-screen" aria-label="Game">
+        <div class="game-screen__inner">
+            <header class="game-header" id="game-header">
+                <div class="game-header__scores">
+                    <div class="game-score game-score--blue">
+                        <img class="game-score__icon" id="blue-score-icon" src="" alt="" aria-hidden="true">
+                        <span class="game-score__name">Blue</span>
+                        <span class="game-score__value" id="blue-score">0</span>
+                    </div>
+                    <div class="game-score game-score--orange">
+                        <img class="game-score__icon" id="orange-score-icon" src="" alt="" aria-hidden="true">
+                        <span class="game-score__name">Orange</span>
+                        <span class="game-score__value" id="orange-score">0</span>
+                    </div>
+                </div>
+
+                <div class="game-header__current">
+                    <span class="game-header__current-label">Current player:</span>
+                    <span class="game-header__player-icon" id="current-player-icon" aria-hidden="true">
+                        <img class="game-header__player-icon-image" id="current-player-icon-image" src="" alt="">
+                    </span>
+                </div>
+
+                <button class="game-exit" id="game-exit" type="button" aria-label="Exit game">
+                    <img class="game-exit__img" id="game-exit-img" src="" alt="" hidden aria-hidden="true">
+                    <span class="game-exit__gaming-default" id="game-exit-gaming-default" hidden aria-hidden="true">
+                        <span class="game-exit__label">Exit game</span>
+                    </span>
+                </button>
+            </header>
+
+            <div class="game-board" id="game-board" aria-label="Game board"></div>
+        </div>
+    </section>
 
     <script type="module" src="/src/main.ts"></script>
 </body>

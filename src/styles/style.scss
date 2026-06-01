@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Red+Rose:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Orbitron:wght@700&family=Red+Rose:wght@700&display=swap");
 
 @font-face {
     font-family: "Josefin Sans";
@@ -439,12 +439,286 @@ body {
 .game-screen {
     min-height: 100vh;
     width: 100%;
+    padding: clamp(24px, 4vw, 48px);
+    box-sizing: border-box;
+    font-family: var(--font-settings);
+
+    &__inner {
+        max-width: 960px;
+        margin: 0 auto;
+    }
 
     &--code-vibes {
-        background: linear-gradient(135deg, #294f60 0%, #2086b4 100%);
+        background-color: #2f3131;
     }
 
     &--gaming {
-        background-color: #256582;
+        background: linear-gradient(135deg, #294f60 0%, #2086b4 100%);
     }
+}
+
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 54px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+
+    &__scores {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+
+    &__current {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__current-label {
+        font-family: "Orbitron", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #ffffff;
+        white-space: nowrap;
+    }
+}
+
+.game-score {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.game-screen--code-vibes {
+    .game-header {
+        background: transparent;
+    }
+
+    .game-header__scores {
+        gap: 10px;
+        background: #86e9d633;
+    }
+
+    .game-header__player-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        background-color: transparent;
+
+        &-image {
+            display: block;
+            width: 29px;
+            height: 24px;
+            filter: none;
+            object-fit: contain;
+        }
+    }
+
+    .game-score {
+        gap: 8px;
+
+        &__name {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            height: 30px;
+            font-family: var(--font-settings);
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &__value {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 25px;
+            height: 38px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &--blue {
+            .game-score__icon {
+                width: 24px;
+                height: 20px;
+                flex-shrink: 0;
+            }
+
+            .game-score__name {
+                width: 52px;
+            }
+
+            .game-score__name,
+            .game-score__value {
+                color: #2bb1ff;
+            }
+        }
+
+        &--orange {
+            .game-score__icon {
+                width: 20px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+
+            .game-score__name {
+                width: 78px;
+            }
+
+            .game-score__name,
+            .game-score__value {
+                color: #f58e39;
+            }
+        }
+    }
+
+    .game-exit--code-vibes {
+        width: 207px;
+        height: 62px;
+    }
+}
+
+.game-screen--gaming {
+    .game-header {
+        background: rgba(77, 213, 188, 0.2);
+    }
+
+    .game-header__scores {
+        gap: 10px;
+        background: #ffffff;
+    }
+
+    .game-header__player-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 41px;
+        height: 40px;
+        border-radius: 3px;
+        flex-shrink: 0;
+
+        &-image {
+            display: block;
+            width: 41px;
+            height: 40px;
+            filter: brightness(0) invert(1);
+            object-fit: contain;
+        }
+
+        &--blue {
+            background-color: #2bb1ff;
+        }
+
+        &--orange {
+            background-color: #f58e39;
+        }
+    }
+
+    .game-score {
+        gap: 6px;
+
+        &__name {
+            display: none;
+        }
+
+        &__icon {
+            width: 22px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        &__value {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 25px;
+            height: 38px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &--blue .game-score__value {
+            color: #2bb1ff;
+        }
+
+        &--orange .game-score__value {
+            color: #f58e39;
+        }
+    }
+
+    .game-exit--gaming {
+        width: 195px;
+        height: 54px;
+    }
+}
+
+.game-exit {
+    position: relative;
+    display: block;
+    border: 0;
+    padding: 0;
+    flex-shrink: 0;
+    background: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &__img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        pointer-events: none;
+
+        &:not([hidden]) {
+            display: block;
+        }
+    }
+
+    &__gaming-default {
+        &:not([hidden]) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 100%;
+            padding: 0 16px;
+            box-sizing: border-box;
+        }
+
+        &:not([hidden])::before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M16 8V6H6V18H16V16H18V20H4V4H18V8H16ZM20 12L14 6V10H8V14H14V18L20 12Z' fill='white'/%3E%3C/svg%3E") center / contain no-repeat;
+        }
+    }
+
+    &__label {
+        font-family: var(--font-settings);
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #ffffff;
+        white-space: nowrap;
+    }
+}
+
+.game-board {
+    min-height: 320px;
 }

@@ -10,6 +10,12 @@ interface GameSettings {
     boardSize: BoardSize | null;
 }
 
+interface GameState {
+    blueScore: number;
+    orangeScore: number;
+    currentPlayer: Player | null;
+}
+
 const assetBase = import.meta.env.BASE_URL;
 
 const themePreviewImages: Record<Theme, string> = {
@@ -30,6 +36,28 @@ const boardLabels: Record<BoardSize, string> = {
 
 const slashDefault = `${assetBase}images/cards/slash.svg`;
 const slashSelected = `${assetBase}images/cards/slash2.svg`;
+const settingsStorageKey = 'memory-game-settings';
+
+const pawnImages: Record<Player, string> = {
+    blue: `${assetBase}images/cards/chess_pawn_blue.svg`,
+    orange: `${assetBase}images/cards/chess_pawn_orange.svg`,
+};
+
+const playerLabelImages: Record<Player, string> = {
+    blue: `${assetBase}images/cards/blue_label.svg`,
+    orange: `${assetBase}images/cards/orange_label.svg`,
+};
+
+const exitImages: Record<Theme, { default: string; hover: string }> = {
+    'code-vibes': {
+        default: `${assetBase}images/cards/turquoise/exitDefault.svg`,
+        hover: `${assetBase}images/cards/turquoise/exithover.svg`,
+    },
+    gaming: {
+        default: `${assetBase}images/cards/red/exit_red.svg`,
+        hover: `${assetBase}images/cards/red/exit_red_hover.svg`,
+    },
+};
 
 const settings: GameSettings = {
     theme: null,
@@ -37,44 +65,96 @@ const settings: GameSettings = {
     boardSize: null,
 };
 
+const gameState: GameState = {
+    blueScore: 0,
+    orangeScore: 0,
+    currentPlayer: null,
+};
+
+let activeExitTheme: Theme | null = null;
+let initCleanup: (() => void) | undefined;
+
 init();
 
 function init(): void {
+    initCleanup?.();
+
+    const abortController = new AbortController();
+    const { signal } = abortController;
+
     const playButton = document.getElementById('play-button');
     const homeScreen = document.getElementById('home-screen');
     const settingsScreen = document.getElementById('settings-screen');
     const gameScreen = document.getElementById('game-screen');
     const startButton = document.getElementById('settings-start');
+    const exitButton = document.getElementById('game-exit');
 
     if (!playButton || !homeScreen || !settingsScreen || !gameScreen || !startButton) {
         return;
     }
 
-    playButton.addEventListener('click', () => {
-        homeScreen.classList.add('hidden');
-        settingsScreen.classList.remove('hidden');
-    });
+    playButton.addEventListener(
+        'click',
+        () => {
+            homeScreen.classList.add('hidden');
+            settingsScreen.classList.remove('hidden');
+        },
+        { signal },
+    );
 
     document.querySelectorAll<HTMLInputElement>('.settings-option__input').forEach((input) => {
-        input.addEventListener('change', () => {
-            updateSettings(input);
-            updateFooter();
-            updateStartButton(startButton);
-            updatePreview();
-        });
+        input.addEventListener(
+            'change',
+            () => {
+                updateSettings(input);
+                updateFooter();
+                updateStartButton(startButton);
+                updatePreview();
+            },
+            { signal },
+        );
     });
 
-    startButton.addEventListener('click', () => {
-        if (startButton.classList.contains('settings-start--disabled') || !isSettingsComplete()) {
-            return;
-        }
+    startButton.addEventListener(
+        'click',
+        () => {
+            if (startButton.classList.contains('settings-start--disabled') || !isSettingsComplete()) {
+                return;
+            }
 
-        startGame(settingsScreen, gameScreen);
-    });
+            startGame(settingsScreen, gameScreen);
+        },
+        { signal },
+    );
+
+    exitButton?.addEventListener(
+        'click',
+        () => {
+            exitGame(settingsScreen, gameScreen, startButton);
+        },
+        { signal },
+    );
+
+    exitButton?.addEventListener('mouseenter', showExitHover, { signal });
+    exitButton?.addEventListener('mouseleave', showExitDefault, { signal });
+
+    window.addEventListener(
+        'pageshow',
+        (event) => {
+            if (event.persisted) {
+                resetExitButton();
+            }
+        },
+        { signal },
+    );
+
+    initCleanup = () => {
+        abortController.abort();
+    };
 }
 
 function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
-    if (!settings.theme) {
+    if (!settings.theme || !settings.player || !settings.boardSize) {
         return;
     }
 
@@ -88,8 +168,163 @@ function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
         gameScreen.classList.add('game-screen--gaming');
     }
 
+    gameState.blueScore = 0;
+    gameState.orangeScore = 0;
+    gameState.currentPlayer = settings.player;
+
+    applyGameHeader();
+
     settingsScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
+}
+
+function exitGame(settingsScreen: HTMLElement, gameScreen: HTMLElement, startButton: HTMLElement): void {
+    resetSettings(startButton);
+    resetExitButton();
+
+    gameScreen.classList.remove('game-screen--code-vibes', 'game-screen--gaming');
+    gameScreen.classList.add('hidden');
+    settingsScreen.classList.remove('hidden');
+}
+
+function resetSettings(startButton: HTMLElement): void {
+    settings.theme = null;
+    settings.player = null;
+    settings.boardSize = null;
+
+    gameState.blueScore = 0;
+    gameState.orangeScore = 0;
+    gameState.currentPlayer = null;
+
+    document.querySelectorAll<HTMLInputElement>('.settings-option__input').forEach((input) => {
+        input.checked = false;
+    });
+
+    clearGameStorage();
+    updateFooter();
+    updateStartButton(startButton);
+    updatePreview();
+}
+
+function clearGameStorage(): void {
+    localStorage.removeItem(settingsStorageKey);
+    sessionStorage.removeItem(settingsStorageKey);
+}
+
+function applyGameHeader(): void {
+    const blueScore = document.getElementById('blue-score');
+    const orangeScore = document.getElementById('orange-score');
+    const playerIcon = document.getElementById('current-player-icon');
+    const playerIconImage = document.getElementById('current-player-icon-image') as HTMLImageElement | null;
+
+    if (blueScore) {
+        blueScore.textContent = String(gameState.blueScore);
+    }
+
+    if (orangeScore) {
+        orangeScore.textContent = String(gameState.orangeScore);
+    }
+
+    applyScoreIcons();
+
+    if (playerIcon && playerIconImage && gameState.currentPlayer) {
+        playerIcon.classList.remove('game-header__player-icon--blue', 'game-header__player-icon--orange');
+        playerIcon.classList.add(`game-header__player-icon--${gameState.currentPlayer}`);
+
+        if (settings.theme === 'code-vibes') {
+            playerIconImage.src = playerLabelImages[gameState.currentPlayer];
+        } else {
+            playerIconImage.src = pawnImages[gameState.currentPlayer];
+        }
+    }
+
+    applyExitButton();
+}
+
+function applyScoreIcons(): void {
+    const blueIcon = document.getElementById('blue-score-icon') as HTMLImageElement | null;
+    const orangeIcon = document.getElementById('orange-score-icon') as HTMLImageElement | null;
+
+    if (!blueIcon || !orangeIcon || !settings.theme) {
+        return;
+    }
+
+    if (settings.theme === 'code-vibes') {
+        blueIcon.src = playerLabelImages.blue;
+        orangeIcon.src = playerLabelImages.orange;
+        return;
+    }
+
+    blueIcon.src = pawnImages.blue;
+    orangeIcon.src = pawnImages.orange;
+}
+
+function applyExitButton(): void {
+    const exitButton = document.getElementById('game-exit');
+
+    if (!exitButton || !settings.theme) {
+        return;
+    }
+
+    activeExitTheme = settings.theme;
+
+    exitButton.classList.remove('game-exit--code-vibes', 'game-exit--gaming');
+    exitButton.classList.add(`game-exit--${settings.theme}`);
+
+    showExitDefault();
+}
+
+function resetExitButton(): void {
+    const exitButton = document.getElementById('game-exit');
+    const exitImage = document.getElementById('game-exit-img') as HTMLImageElement | null;
+    const gamingDefault = document.getElementById('game-exit-gaming-default');
+
+    activeExitTheme = null;
+
+    exitButton?.classList.remove('game-exit--code-vibes', 'game-exit--gaming', 'game-exit--hover');
+
+    if (exitImage) {
+        exitImage.hidden = true;
+        exitImage.removeAttribute('src');
+    }
+
+    if (gamingDefault) {
+        gamingDefault.hidden = true;
+    }
+}
+
+function showExitDefault(): void {
+    const exitButton = document.getElementById('game-exit');
+    const exitImage = document.getElementById('game-exit-img') as HTMLImageElement | null;
+    const gamingDefault = document.getElementById('game-exit-gaming-default');
+
+    if (!activeExitTheme || !exitImage) {
+        return;
+    }
+
+    exitButton?.classList.remove('game-exit--hover');
+    gamingDefault?.setAttribute('hidden', '');
+
+    const images = exitImages[activeExitTheme];
+    exitImage.hidden = false;
+    exitImage.src = images.default;
+}
+
+function showExitHover(): void {
+    const exitButton = document.getElementById('game-exit');
+    const exitImage = document.getElementById('game-exit-img') as HTMLImageElement | null;
+    const gamingDefault = document.getElementById('game-exit-gaming-default');
+
+    if (!activeExitTheme || !exitImage) {
+        return;
+    }
+
+    exitButton?.classList.add('game-exit--hover');
+    gamingDefault?.setAttribute('hidden', '');
+
+    const images = exitImages[activeExitTheme];
+    exitImage.hidden = false;
+    exitImage.src = images.hover;
 }
 
 function updateSettings(input: HTMLInputElement): void {
@@ -162,4 +397,10 @@ function updatePreview(): void {
 
     previewImage.hidden = true;
     previewImage.removeAttribute('src');
+}
+
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        initCleanup?.();
+    });
 }
