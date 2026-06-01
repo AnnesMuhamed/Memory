@@ -115,19 +115,21 @@
                     hidden
                 >
 
-                <div class="settings-footer">
+                <div class="settings-footer" id="settings-footer">
                     <div class="settings-footer__labels">
-                        <span>Game theme</span>
-                        <img src="/images/cards/slash.svg" alt="" aria-hidden="true">
-                        <span>Player</span>
-                        <img src="/images/cards/slash.svg" alt="" aria-hidden="true">
-                        <span>Board size</span>
+                        <span id="footer-theme-label">Theme</span>
+                        <img class="settings-footer__slash" data-after="theme" src="/images/cards/slash.svg" alt="" aria-hidden="true">
+                        <span id="footer-player-label">Player</span>
+                        <img class="settings-footer__slash" data-after="player" src="/images/cards/slash.svg" alt="" aria-hidden="true">
+                        <span id="footer-board-label">Board size</span>
                     </div>
                     <button class="settings-start settings-start--disabled" id="settings-start" type="button" disabled aria-label="Start"></button>
                 </div>
             </div>
         </div>
     </section>
+
+    <section class="game-screen hidden" id="game-screen" aria-label="Game"></section>
 
     <script type="module" src="/src/main.ts"></script>
 </body>

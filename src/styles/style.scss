@@ -36,6 +36,7 @@
 body {
     min-height: 100vh;
     margin: 0;
+    overflow-x: hidden;
     font-family: var(--font-body);
     background-color: var(--color-bg);
     color: var(--color-text);
@@ -153,12 +154,14 @@ body {
 
     &__layout {
         display: grid;
-        grid-template-columns: minmax(320px, 1fr) 460px;
+        grid-template-columns: minmax(320px, 1fr) 630px;
         grid-template-rows: auto 1fr;
-        column-gap: clamp(32px, 5vw, 80px);
+        column-gap: clamp(64px, 10vw, 140px);
         row-gap: clamp(28px, 3vw, 40px);
         align-items: start;
+        max-width: 1320px;
         min-height: 100vh;
+        margin: 0 auto;
         padding: clamp(32px, 5vw, 72px) clamp(24px, 6vw, 96px);
         box-sizing: border-box;
     }
@@ -308,13 +311,16 @@ body {
     grid-row: 2;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    width: 460px;
+    align-items: center;
+    width: 630px;
+    max-width: 100%;
+    min-width: 0;
     gap: 20px;
 
     &__theme {
         display: block;
         width: 460px;
+        max-width: 100%;
         height: auto;
         object-fit: contain;
 
@@ -328,39 +334,56 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    width: 460px;
+    gap: 12px;
+    width: 630px;
+    min-width: 630px;
+    max-width: 630px;
     height: 96px;
     padding: 0 20px;
     border-radius: 12px;
     background-color: #f6f6f6;
     box-sizing: border-box;
+    overflow: hidden;
+    flex-shrink: 0;
 
     &__labels {
         display: flex;
         align-items: center;
-        gap: 12px;
+        flex: 1;
+        min-width: 0;
+        gap: 10px;
+        flex-wrap: nowrap;
+        overflow: hidden;
         font-size: 1.125rem;
         font-weight: 700;
+        line-height: 1;
         color: var(--color-settings-text);
-        white-space: nowrap;
 
-        img {
-            width: auto;
-            height: 28px;
+        span {
+            white-space: nowrap;
             flex-shrink: 0;
+        }
+    }
+
+    &__slash {
+        width: auto;
+        height: 28px;
+        flex-shrink: 0;
+
+        &--selected {
+            height: 36px;
         }
     }
 }
 
 .settings-start {
-    width: 140px;
-    height: 61px;
+    width: 126px;
+    height: 53px;
     border: 0;
     padding: 0;
     flex-shrink: 0;
     background: transparent center / contain no-repeat;
-    transition: transform 180ms ease, filter 180ms ease;
+    transition: filter 180ms ease;
 
     &--disabled {
         background-image: url("/images/cards/start_gray_button.svg");
@@ -373,7 +396,7 @@ body {
 
         &:hover:not(:disabled) {
             background-image: url("/images/cards/start_hover_hover.svg");
-            transform: translateY(-1px);
+            filter: brightness(1.02);
         }
     }
 }
@@ -397,12 +420,31 @@ body {
     .settings-preview {
         grid-column: 1;
         grid-row: 3;
-        width: min(100%, 460px);
+        width: min(100%, 630px);
+        justify-self: center;
     }
 
-    .settings-preview__theme,
+    .settings-preview__theme {
+        width: min(100%, 460px);
+        max-width: 460px;
+    }
+
     .settings-footer {
         width: 100%;
-        max-width: 460px;
+        max-width: 630px;
+        min-width: 0;
+    }
+}
+
+.game-screen {
+    min-height: 100vh;
+    width: 100%;
+
+    &--code-vibes {
+        background: linear-gradient(135deg, #294f60 0%, #2086b4 100%);
+    }
+
+    &--gaming {
+        background-color: #256582;
     }
 }

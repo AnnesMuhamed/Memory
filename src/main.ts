@@ -17,6 +17,20 @@ const themePreviewImages: Record<Theme, string> = {
     gaming: `${assetBase}images/cards/gaming_theme.svg`,
 };
 
+const playerLabels: Record<Player, string> = {
+    blue: 'Blue Player',
+    orange: 'Orange Player',
+};
+
+const boardLabels: Record<BoardSize, string> = {
+    '16': 'Board-16 Cards',
+    '24': 'Board-24 Cards',
+    '36': 'Board-36 Cards',
+};
+
+const slashDefault = `${assetBase}images/cards/slash.svg`;
+const slashSelected = `${assetBase}images/cards/slash2.svg`;
+
 const settings: GameSettings = {
     theme: null,
     player: null,
@@ -29,9 +43,10 @@ function init(): void {
     const playButton = document.getElementById('play-button');
     const homeScreen = document.getElementById('home-screen');
     const settingsScreen = document.getElementById('settings-screen');
+    const gameScreen = document.getElementById('game-screen');
     const startButton = document.getElementById('settings-start');
 
-    if (!playButton || !homeScreen || !settingsScreen || !startButton) {
+    if (!playButton || !homeScreen || !settingsScreen || !gameScreen || !startButton) {
         return;
     }
 
@@ -43,18 +58,38 @@ function init(): void {
     document.querySelectorAll<HTMLInputElement>('.settings-option__input').forEach((input) => {
         input.addEventListener('change', () => {
             updateSettings(input);
+            updateFooter();
             updateStartButton(startButton);
             updatePreview();
         });
     });
 
     startButton.addEventListener('click', () => {
-        if (startButton.classList.contains('settings-start--disabled')) {
+        if (startButton.classList.contains('settings-start--disabled') || !isSettingsComplete()) {
             return;
         }
 
-        // Game screen will be implemented next.
+        startGame(settingsScreen, gameScreen);
     });
+}
+
+function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
+    if (!settings.theme) {
+        return;
+    }
+
+    gameScreen.classList.remove('game-screen--code-vibes', 'game-screen--gaming');
+
+    if (settings.theme === 'code-vibes') {
+        gameScreen.classList.add('game-screen--code-vibes');
+    }
+
+    if (settings.theme === 'gaming') {
+        gameScreen.classList.add('game-screen--gaming');
+    }
+
+    settingsScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
 }
 
 function updateSettings(input: HTMLInputElement): void {
@@ -86,6 +121,30 @@ function updateStartButton(startButton: HTMLElement): void {
     if (startButton instanceof HTMLButtonElement) {
         startButton.disabled = !complete;
     }
+}
+
+function updateFooter(): void {
+    const themeLabel = document.getElementById('footer-theme-label');
+    const playerLabel = document.getElementById('footer-player-label');
+    const boardLabel = document.getElementById('footer-board-label');
+
+    if (!themeLabel || !playerLabel || !boardLabel) {
+        return;
+    }
+
+    themeLabel.textContent = settings.theme ? 'Game theme' : 'Theme';
+    playerLabel.textContent = settings.player ? playerLabels[settings.player] : 'Player';
+    boardLabel.textContent = settings.boardSize ? boardLabels[settings.boardSize] : 'Board size';
+
+    document.querySelectorAll<HTMLImageElement>('.settings-footer__slash').forEach((slash) => {
+        const field = slash.dataset.after;
+        const isSelected =
+            (field === 'theme' && settings.theme !== null) ||
+            (field === 'player' && settings.player !== null);
+
+        slash.src = isSelected ? slashSelected : slashDefault;
+        slash.classList.toggle('settings-footer__slash--selected', isSelected);
+    });
 }
 
 function updatePreview(): void {
