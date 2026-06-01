@@ -54,7 +54,7 @@
 
                 <fieldset class="settings-group">
                     <legend class="settings-group__legend">
-                        <span class="settings-group__icon settings-group__icon--player" aria-hidden="true"></span>
+                        <img class="settings-group__icon" src="/images/chess_pawn_menu.svg" alt="" aria-hidden="true">
                         Choose player
                     </legend>
                     <div class="settings-group__options">
@@ -77,7 +77,7 @@
 
                 <fieldset class="settings-group">
                     <legend class="settings-group__legend">
-                        <span class="settings-group__icon settings-group__icon--board" aria-hidden="true"></span>
+                        <img class="settings-group__icon" src="/images/board.svg" alt="" aria-hidden="true">
                         Board size
                     </legend>
                     <div class="settings-group__options">
@@ -215,6 +215,20 @@
             </header>
 
             <div class="game-board" id="game-board" aria-label="Game board"></div>
+
+            <div class="exit-confirm hidden" id="exit-confirm" aria-label="Exit confirmation">
+                <div class="exit-confirm__dialog">
+                    <p class="exit-confirm__text">Are you sure you want to quit the game?</p>
+                    <div class="exit-confirm__actions">
+                        <button class="exit-confirm__back" id="exit-confirm-back" type="button">
+                            Back to game
+                        </button>
+                        <button class="exit-confirm__exit" id="exit-confirm-exit" type="button">
+                            Exit game
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

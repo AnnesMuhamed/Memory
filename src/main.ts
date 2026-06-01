@@ -250,6 +250,23 @@ function init(): void {
     exitButton?.addEventListener(
         'click',
         () => {
+            handleExitClick();
+        },
+        { signal },
+    );
+
+    document.getElementById('exit-confirm-back')?.addEventListener(
+        'click',
+        () => {
+            hideExitConfirm();
+        },
+        { signal },
+    );
+
+    document.getElementById('exit-confirm-exit')?.addEventListener(
+        'click',
+        () => {
+            hideExitConfirm();
             exitGame(settingsScreen, gameScreen, startButton);
         },
         { signal },
@@ -302,12 +319,14 @@ function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
 
     applyGameHeader();
     renderGameBoard();
+    hideExitConfirm();
 
     settingsScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
 }
 
 function exitGame(settingsScreen: HTMLElement, gameScreen: HTMLElement, startButton: HTMLElement): void {
+    hideExitConfirm();
     resetSettings(startButton);
     resetExitButton();
     clearGameBoard();
@@ -315,6 +334,46 @@ function exitGame(settingsScreen: HTMLElement, gameScreen: HTMLElement, startBut
     gameScreen.classList.remove('game-screen--code-vibes', 'game-screen--gaming');
     gameScreen.classList.add('hidden');
     settingsScreen.classList.remove('hidden');
+}
+
+function handleExitClick(): void {
+    showExitConfirm();
+}
+
+function showExitConfirm(): void {
+    const exitConfirm = document.getElementById('exit-confirm');
+    if (!exitConfirm) {
+        return;
+    }
+
+    const theme = settings.theme === 'gaming' ? 'gaming' : 'code-vibes';
+    exitConfirm.classList.remove('exit-confirm--code-vibes', 'exit-confirm--gaming');
+    exitConfirm.classList.add(`exit-confirm--${theme}`);
+
+    const backButton = document.getElementById('exit-confirm-back');
+    const exitButton = document.getElementById('exit-confirm-exit');
+
+    if (theme === 'gaming') {
+        if (backButton) {
+            backButton.textContent = 'No, back to game';
+        }
+        if (exitButton) {
+            exitButton.textContent = 'Yes, quit game';
+        }
+    } else {
+        if (backButton) {
+            backButton.textContent = 'Back to game';
+        }
+        if (exitButton) {
+            exitButton.textContent = 'Exit game';
+        }
+    }
+
+    exitConfirm.classList.remove('hidden');
+}
+
+function hideExitConfirm(): void {
+    document.getElementById('exit-confirm')?.classList.add('hidden');
 }
 
 function resetSettings(startButton: HTMLElement): void {

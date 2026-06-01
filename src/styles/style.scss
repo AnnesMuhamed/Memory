@@ -210,35 +210,6 @@ body {
         width: 32px;
         height: 32px;
         flex-shrink: 0;
-
-        &--player {
-            display: inline-block;
-            border-radius: 50% 50% 0 0;
-            background: linear-gradient(180deg, #4ecdc4 0%, #4ecdc4 55%, transparent 55%);
-            position: relative;
-
-            &::after {
-                content: "";
-                position: absolute;
-                left: 50%;
-                bottom: 2px;
-                width: 22px;
-                height: 10px;
-                border-radius: 50%;
-                background-color: #4ecdc4;
-                transform: translateX(-50%);
-            }
-        }
-
-        &--board {
-            display: inline-block;
-            border: 3px solid #2f80ed;
-            border-radius: 4px;
-            background:
-                linear-gradient(#2f80ed, #2f80ed) 6px 8px / 18px 2px no-repeat,
-                linear-gradient(#2f80ed, #2f80ed) 6px 14px / 18px 2px no-repeat,
-                linear-gradient(#2f80ed, #2f80ed) 6px 20px / 18px 2px no-repeat;
-        }
     }
 
     &__options {
@@ -454,6 +425,131 @@ body {
 
     &--gaming {
         background: linear-gradient(135deg, #294f60 0%, #2086b4 100%);
+    }
+}
+
+.exit-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &__dialog {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 54px;
+        width: 539px;
+        height: 270px;
+        padding: 40px;
+        box-sizing: border-box;
+    }
+
+    &__text {
+        margin: 0;
+        font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+        font-weight: 700;
+        line-height: 1.35;
+        text-align: center;
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    &__back,
+    &__exit {
+        min-width: 140px;
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        transition: filter 180ms ease, transform 180ms ease;
+
+        &:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.03);
+        }
+    }
+
+    &--code-vibes {
+        background-color: rgba(47, 49, 49, 0.55);
+
+        .exit-confirm__dialog {
+            background-color: #ffffff;
+        }
+
+        .exit-confirm__text {
+            font-family: var(--font-settings);
+            color: #303131;
+        }
+
+        .exit-confirm__back,
+        .exit-confirm__exit {
+            border-radius: 4px;
+            font-family: var(--font-settings);
+
+            &:focus-visible {
+                outline: 3px solid #4dd5bc;
+                outline-offset: 2px;
+            }
+        }
+
+        .exit-confirm__back {
+            border: 2px solid #4dd5bc;
+            background-color: #4dd5bc;
+            color: #ffffff;
+        }
+
+        .exit-confirm__exit {
+            border: 2px solid #4dd5bc;
+            background-color: #ffffff;
+            color: #4dd5bc;
+        }
+    }
+
+    &--gaming {
+        background-color: rgba(41, 79, 96, 0.65);
+
+        .exit-confirm__dialog {
+            background-color: #f6f6f6;
+            border-radius: 20px;
+        }
+
+        .exit-confirm__text {
+            font-family: "Orbitron", sans-serif;
+            color: #303131;
+        }
+
+        .exit-confirm__back,
+        .exit-confirm__exit {
+            border-radius: 16px;
+            font-family: "Orbitron", sans-serif;
+
+            &:focus-visible {
+                outline: 3px solid #ed1b76;
+                outline-offset: 2px;
+            }
+        }
+
+        .exit-confirm__back {
+            border: 2px solid #ed1b76;
+            background-color: #ed1b76;
+            color: #ffffff;
+        }
+
+        .exit-confirm__exit {
+            border: 2px solid #ed1b76;
+            background-color: transparent;
+            color: #ed1b76;
+        }
     }
 }
 
