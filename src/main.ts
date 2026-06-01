@@ -70,6 +70,43 @@ const boardColumns: Record<BoardSize, number> = {
     '36': 6,
 };
 
+const boardPairCount: Record<BoardSize, number> = {
+    '16': 8,
+    '24': 12,
+    '36': 18,
+};
+
+const codeVibesSymbols = [
+    'angular',
+    'bootstrap',
+    'cloudeflareR2',
+    'cmd',
+    'css',
+    'django',
+    'firebase',
+    'git',
+    'github',
+    'html',
+    'javascript',
+    'nodejs',
+    'pyton',
+    'react',
+    'sass',
+    'typescript',
+    'vscode',
+    'vue',
+] as const;
+
+type CodeVibesSymbol = (typeof codeVibesSymbols)[number];
+
+interface MemoryCard {
+    id: number;
+    symbolId: CodeVibesSymbol;
+    symbolSrc: string;
+    isFlipped: boolean;
+    isMatched: boolean;
+}
+
 const settings: GameSettings = {
     theme: null,
     player: null,
@@ -84,6 +121,10 @@ const gameState: GameState = {
 
 let activeExitTheme: Theme | null = null;
 let initCleanup: (() => void) | undefined;
+let boardAbortController: AbortController | null = null;
+let memoryCards: MemoryCard[] = [];
+let flippedCardIds: number[] = [];
+let isBoardLocked = false;
 
 init();
 
@@ -263,17 +304,26 @@ function renderGameBoard(): void {
 
     clearGameBoard();
 
-    const cardCount = Number(settings.boardSize);
     const columns = boardColumns[settings.boardSize];
-    const cardBack = cardBackImages[settings.theme];
 
     board.classList.add(`game-board--${settings.theme}`);
     board.style.setProperty('--board-columns', String(columns));
 
+    if (settings.theme === 'code-vibes') {
+        renderCodeVibesMemoryBoard(board, settings.boardSize);
+        return;
+    }
+
+    renderStaticBoard(board, settings.theme, Number(settings.boardSize));
+}
+
+function renderStaticBoard(board: HTMLElement, theme: Theme, cardCount: number): void {
+    const cardBack = cardBackImages[theme];
+
     for (let index = 0; index < cardCount; index += 1) {
         const card = document.createElement('button');
         card.type = 'button';
-        card.className = `game-card game-card--${settings.theme}`;
+        card.className = `game-card game-card--${theme}`;
         card.setAttribute('aria-label', `Card ${index + 1}`);
 
         const image = document.createElement('img');
@@ -287,7 +337,202 @@ function renderGameBoard(): void {
     }
 }
 
+function renderCodeVibesMemoryBoard(board: HTMLElement, boardSize: BoardSize): void {
+    memoryCards = createMemoryDeck(boardSize);
+    flippedCardIds = [];
+    isBoardLocked = false;
+
+    memoryCards.forEach((cardData) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'game-card game-card--code-vibes';
+        card.dataset.cardId = String(cardData.id);
+        card.setAttribute('aria-label', 'Hidden card');
+
+        const inner = document.createElement('div');
+        inner.className = 'game-card__inner';
+
+        const front = document.createElement('div');
+        front.className = 'game-card__face game-card__face--front';
+
+        const frontImage = document.createElement('img');
+        frontImage.src = cardData.symbolSrc;
+        frontImage.alt = '';
+        frontImage.setAttribute('aria-hidden', 'true');
+        front.appendChild(frontImage);
+
+        const back = document.createElement('div');
+        back.className = 'game-card__face game-card__face--back';
+
+        const backImage = document.createElement('img');
+        backImage.src = cardBackImages['code-vibes'];
+        backImage.alt = '';
+        backImage.setAttribute('aria-hidden', 'true');
+        back.appendChild(backImage);
+
+        inner.appendChild(front);
+        inner.appendChild(back);
+        card.appendChild(inner);
+        board.appendChild(card);
+    });
+
+    boardAbortController = new AbortController();
+    board.addEventListener('click', handleCodeVibesCardClick, { signal: boardAbortController.signal });
+}
+
+function createMemoryDeck(boardSize: BoardSize): MemoryCard[] {
+    const pairCount = boardPairCount[boardSize];
+    const selectedSymbols = shuffleArray([...codeVibesSymbols]).slice(0, pairCount);
+
+    const deck = selectedSymbols.flatMap((symbolId) => {
+        const symbolSrc = `${assetBase}images/cards/turquoise/card-symbol/${symbolId}.svg`;
+
+        return [
+            { symbolId, symbolSrc, isFlipped: false, isMatched: false },
+            { symbolId, symbolSrc, isFlipped: false, isMatched: false },
+        ];
+    });
+
+    return shuffleArray(deck).map((card, index) => ({
+        ...card,
+        id: index,
+    }));
+}
+
+function shuffleArray<T>(items: T[]): T[] {
+    const shuffled = [...items];
+
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+
+    return shuffled;
+}
+
+function handleCodeVibesCardClick(event: Event): void {
+    if (isBoardLocked) {
+        return;
+    }
+
+    const cardButton = (event.target as HTMLElement).closest('.game-card') as HTMLButtonElement | null;
+
+    if (!cardButton || cardButton.disabled) {
+        return;
+    }
+
+    const cardId = Number(cardButton.dataset.cardId);
+    const card = memoryCards[cardId];
+
+    if (!card || card.isMatched || card.isFlipped) {
+        return;
+    }
+
+    flipMemoryCard(cardId, true);
+    flippedCardIds.push(cardId);
+
+    if (flippedCardIds.length < 2) {
+        return;
+    }
+
+    isBoardLocked = true;
+
+    const [firstId, secondId] = flippedCardIds;
+    const firstCard = memoryCards[firstId];
+    const secondCard = memoryCards[secondId];
+
+    if (firstCard.symbolId === secondCard.symbolId) {
+        window.setTimeout(() => {
+            resolveMatchedPair(firstId, secondId);
+            flippedCardIds = [];
+            isBoardLocked = false;
+        }, 400);
+
+        return;
+    }
+
+    window.setTimeout(() => {
+        flipMemoryCard(firstId, false);
+        flipMemoryCard(secondId, false);
+        switchCurrentPlayer();
+        flippedCardIds = [];
+        isBoardLocked = false;
+    }, 800);
+}
+
+function flipMemoryCard(cardId: number, flipped: boolean): void {
+    const card = memoryCards[cardId];
+
+    if (!card) {
+        return;
+    }
+
+    card.isFlipped = flipped;
+
+    const cardButton = document.querySelector<HTMLButtonElement>(`[data-card-id="${cardId}"]`);
+
+    if (!cardButton) {
+        return;
+    }
+
+    cardButton.classList.toggle('game-card--flipped', flipped);
+    cardButton.setAttribute('aria-label', flipped ? `Revealed ${card.symbolId} card` : 'Hidden card');
+}
+
+function resolveMatchedPair(firstId: number, secondId: number): void {
+    [firstId, secondId].forEach((cardId) => {
+        const card = memoryCards[cardId];
+
+        if (!card) {
+            return;
+        }
+
+        card.isMatched = true;
+        card.isFlipped = true;
+
+        const cardButton = document.querySelector<HTMLButtonElement>(`[data-card-id="${cardId}"]`);
+
+        if (!cardButton) {
+            return;
+        }
+
+        cardButton.classList.add('game-card--flipped', 'game-card--matched');
+        cardButton.disabled = true;
+        cardButton.setAttribute('aria-label', 'Empty slot');
+        cardButton.setAttribute('aria-hidden', 'true');
+    });
+
+    incrementCurrentPlayerScore();
+}
+
+function incrementCurrentPlayerScore(): void {
+    if (gameState.currentPlayer === 'blue') {
+        gameState.blueScore += 1;
+    }
+
+    if (gameState.currentPlayer === 'orange') {
+        gameState.orangeScore += 1;
+    }
+
+    applyGameHeader();
+}
+
+function switchCurrentPlayer(): void {
+    if (!gameState.currentPlayer) {
+        return;
+    }
+
+    gameState.currentPlayer = gameState.currentPlayer === 'blue' ? 'orange' : 'blue';
+    applyGameHeader();
+}
+
 function clearGameBoard(): void {
+    boardAbortController?.abort();
+    boardAbortController = null;
+    memoryCards = [];
+    flippedCardIds = [];
+    isBoardLocked = false;
+
     const board = document.getElementById('game-board');
 
     if (!board) {

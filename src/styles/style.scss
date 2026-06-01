@@ -741,6 +741,47 @@ body {
 
     &--code-vibes {
         border-radius: 4px;
+        perspective: 1000px;
+
+        .game-card__inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.45s ease;
+        }
+
+        .game-card__face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+        }
+
+        .game-card__face--front {
+            transform: rotateY(180deg);
+        }
+
+        &.game-card--flipped .game-card__inner {
+            transform: rotateY(180deg);
+        }
+
+        &.game-card--matched {
+            pointer-events: none;
+            cursor: default;
+            visibility: visible;
+
+            .game-card__inner {
+                opacity: 0;
+                transition: opacity 0.25s ease;
+            }
+        }
     }
 
     &--gaming {
