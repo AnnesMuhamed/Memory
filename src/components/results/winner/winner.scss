@@ -1,0 +1,8 @@
+.results-panel--winner {
+    .results-panel__player-icon {
+        width: clamp(120px, 22vw, 200px);
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+    }
+}

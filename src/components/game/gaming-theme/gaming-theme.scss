@@ -1,0 +1,78 @@
+.game-screen--gaming {
+    .game-header {
+        background: rgba(77, 213, 188, 0.2);
+    }
+
+    .game-header__scores {
+        gap: 10px;
+        background: #ffffff;
+    }
+
+    .game-header__player-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 41px;
+        height: 40px;
+        border-radius: 3px;
+        flex-shrink: 0;
+
+        &-image {
+            display: block;
+            width: 41px;
+            height: 40px;
+            filter: brightness(0) invert(1);
+            object-fit: contain;
+        }
+
+        &--blue {
+            background-color: #2bb1ff;
+        }
+
+        &--orange {
+            background-color: #f58e39;
+        }
+    }
+
+    .game-score {
+        gap: 6px;
+
+        &__name {
+            display: none;
+        }
+
+        &__icon {
+            width: 22px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        &__value {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 25px;
+            height: 38px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &--blue .game-score__value {
+            color: #2bb1ff;
+        }
+
+        &--orange .game-score__value {
+            color: #f58e39;
+        }
+    }
+
+    .game-exit--gaming {
+        width: 195px;
+        height: 54px;
+    }
+
+    .game-card--gaming {
+        aspect-ratio: 129 / 144;
+    }
+}

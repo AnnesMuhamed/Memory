@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Orbitron:wght@700&family=Red+Rose:wght@700&display=swap");
+
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("/fonts/Josefin_Sans/static/JosefinSans-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("/fonts/Josefin_Sans/static/JosefinSans-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Red Rose";
+    src: url("/fonts/Red_Rose/static/RedRose-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+:root {
+    --font-title: "Red Rose", serif;
+    --font-subtitle: "Almarai", sans-serif;
+    --font-body: "Almarai", sans-serif;
+    --font-settings: "Josefin Sans", sans-serif;
+    --color-bg: #2f3131;
+    --color-text: #ffffff;
+    --color-settings-text: #303131;
+    --color-settings-accent: #f0ea6e;
+    --color-settings-muted: #dbdbd6;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+.hidden {
+    display: none !important;
+}

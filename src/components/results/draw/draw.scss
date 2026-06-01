@@ -1,0 +1,15 @@
+.results-panel--draw {
+    .results-panel__title--draw {
+        color: #4dd5bc;
+        text-shadow:
+            0 2px 0 #2a8a78,
+            0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .results-panel__draw-icon {
+        width: clamp(140px, 28vw, 280px);
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+    }
+}

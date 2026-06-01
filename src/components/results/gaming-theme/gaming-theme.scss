@@ -1,0 +1,56 @@
+.results-screen--gaming {
+    background: linear-gradient(135deg, #294f60 0%, #2086b4 100%);
+
+    .results-panel__title--blue,
+    .results-panel__title--orange {
+        text-transform: none;
+        font-size: clamp(2rem, 6vw, 3.25rem);
+        text-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .results-panel__title--draw,
+    .results-panel__title--game-over {
+        color: #ed1b76;
+        text-shadow:
+            0 2px 0 #a81355,
+            0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .results-panel__player-icon--gaming {
+        width: clamp(160px, 30vw, 280px);
+    }
+
+    .results-score {
+        background: #ffffff;
+        border: none;
+        border-radius: 12px;
+        gap: clamp(32px, 8vw, 30px);
+        width: 180px;
+        padding: clamp(12px, 2vw, 16px) clamp(28px, 5vw, 40px);
+    }
+
+    .results-score__player {
+        gap: 10px;
+    }
+
+    .results-score__icon {
+        width: 36px;
+        height: 30px;
+    }
+
+    .results-score__value {
+        font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+    }
+
+    .results-score__label {
+        display: none;
+    }
+
+    .results-score__player--orange {
+        order: 1;
+    }
+
+    .results-score__player--blue {
+        order: 2;
+    }
+}

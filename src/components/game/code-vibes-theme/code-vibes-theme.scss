@@ -1,0 +1,96 @@
+.game-screen--code-vibes {
+    .game-header {
+        background: transparent;
+    }
+
+    .game-header__scores {
+        gap: 10px;
+        background: #86e9d633;
+    }
+
+    .game-header__player-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        background-color: transparent;
+
+        &-image {
+            display: block;
+            width: 29px;
+            height: 24px;
+            filter: none;
+            object-fit: contain;
+        }
+    }
+
+    .game-score {
+        gap: 8px;
+
+        &__name {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            height: 30px;
+            font-family: var(--font-settings);
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &__value {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 25px;
+            height: 38px;
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        &--blue {
+            .game-score__icon {
+                width: 24px;
+                height: 20px;
+                flex-shrink: 0;
+            }
+
+            .game-score__name {
+                width: 52px;
+            }
+
+            .game-score__name,
+            .game-score__value {
+                color: #2bb1ff;
+            }
+        }
+
+        &--orange {
+            .game-score__icon {
+                width: 20px;
+                height: 16px;
+                flex-shrink: 0;
+            }
+
+            .game-score__name {
+                width: 78px;
+            }
+
+            .game-score__name,
+            .game-score__value {
+                color: #f58e39;
+            }
+        }
+    }
+
+    .game-exit--code-vibes {
+        width: 207px;
+        height: 62px;
+    }
+
+    .game-card--code-vibes {
+        border-radius: 4px;
+    }
+}
