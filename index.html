@@ -129,6 +129,60 @@
         </div>
     </section>
 
+    <section class="results-screen hidden" id="results-screen" aria-label="Game results">
+        <img
+            class="results-screen__confetti hidden"
+            id="results-confetti"
+            src="/images/Confetti.svg"
+            alt=""
+            aria-hidden="true"
+        >
+
+        <div class="results-screen__content">
+            <div class="results-panel results-panel--winner hidden" id="results-winner">
+                <p class="results-panel__eyebrow">The winner is</p>
+                <h1 class="results-panel__title" id="results-winner-name"></h1>
+                <img class="results-panel__player-icon" id="results-winner-icon" src="" alt="">
+            </div>
+
+            <div class="results-panel results-panel--draw hidden" id="results-draw">
+                <p class="results-panel__eyebrow">It&rsquo;s a</p>
+                <h1 class="results-panel__title results-panel__title--draw">DRAW</h1>
+                <img
+                    class="results-panel__draw-icon"
+                    id="results-draw-icon"
+                    src="/images/draw_blue.svg"
+                    alt=""
+                    aria-hidden="true"
+                >
+            </div>
+
+            <div class="results-panel results-panel--game-over hidden" id="results-game-over">
+                <h1 class="results-panel__title results-panel__title--game-over">Game over</h1>
+                <p class="results-panel__eyebrow results-panel__eyebrow--final">Final score</p>
+                <div class="results-score">
+                    <div class="results-score__player results-score__player--blue">
+                        <img class="results-score__icon" id="results-blue-icon" src="" alt="" aria-hidden="true">
+                        <span class="results-score__label">Blue</span>
+                        <span class="results-score__value" id="results-blue-score"></span>
+                    </div>
+                    <div class="results-score__player results-score__player--orange">
+                        <img class="results-score__icon" id="results-orange-icon" src="" alt="" aria-hidden="true">
+                        <span class="results-score__label">Orange</span>
+                        <span class="results-score__value" id="results-orange-score"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="results-back results-back--code-vibes"
+                id="results-back"
+                type="button"
+                aria-label="Back to start"
+            ></button>
+        </div>
+    </section>
+
     <section class="game-screen hidden" id="game-screen" aria-label="Game">
         <div class="game-screen__inner">
             <header class="game-header" id="game-header">

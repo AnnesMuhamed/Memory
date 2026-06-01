@@ -70,11 +70,10 @@ const boardColumns: Record<BoardSize, number> = {
     '36': 6,
 };
 
-const boardPairCount: Record<BoardSize, number> = {
-    '16': 8,
-    '24': 12,
-    '36': 18,
-};
+const gamingRootSymbols = new Set([
+    'Property 1=Component 2.svg',
+    'Property 1=Default.svg',
+]);
 
 const codeVibesSymbols = [
     'angular',
@@ -114,12 +113,57 @@ const gamingSymbols = [
     'Property 1=Component 2 (14).svg',
     'Property 1=Component 2 (15).svg',
     'Property 1=Component 2 (16).svg',
+    'Property 1=Component 2.svg',
+    'Property 1=Default.svg',
 ] as const;
 
 const themeSymbols: Record<Theme, readonly string[]> = {
     'code-vibes': codeVibesSymbols,
     gaming: gamingSymbols,
 };
+
+const winnerNames: Record<Player, string> = {
+    blue: 'BLUE PLAYER',
+    orange: 'ORANGE PLAYER',
+};
+
+const gamingWinnerNames: Record<Player, string> = {
+    blue: 'Blue Player',
+    orange: 'Orange Player',
+};
+
+interface ResultsThemeAssets {
+    confetti: string | null;
+    winnerPlayerImages: Record<Player, string>;
+    winnerLabels: Record<Player, string>;
+    drawImage: string;
+    scoreIcons: Record<Player, string>;
+}
+
+const resultsThemeAssets: Record<Theme, ResultsThemeAssets> = {
+    'code-vibes': {
+        confetti: `${assetBase}images/Confetti.svg`,
+        winnerPlayerImages: {
+            blue: `${assetBase}images/blue_player.svg`,
+            orange: `${assetBase}images/orange_player.svg`,
+        },
+        winnerLabels: winnerNames,
+        drawImage: `${assetBase}images/draw_blue.svg`,
+        scoreIcons: playerLabelImages,
+    },
+    gaming: {
+        confetti: null,
+        winnerPlayerImages: {
+            blue: `${assetBase}images/pockal.svg`,
+            orange: `${assetBase}images/pockal.svg`,
+        },
+        winnerLabels: gamingWinnerNames,
+        drawImage: `${assetBase}images/draw_red.svg`,
+        scoreIcons: pawnImages,
+    },
+};
+
+type GameOutcome = 'win' | 'lose' | 'draw';
 
 interface MemoryCard {
     id: number;
@@ -160,6 +204,8 @@ function init(): void {
     const homeScreen = document.getElementById('home-screen');
     const settingsScreen = document.getElementById('settings-screen');
     const gameScreen = document.getElementById('game-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const resultsBackButton = document.getElementById('results-back');
     const startButton = document.getElementById('settings-start');
     const exitButton = document.getElementById('game-exit');
 
@@ -211,6 +257,14 @@ function init(): void {
 
     exitButton?.addEventListener('mouseenter', showExitHover, { signal });
     exitButton?.addEventListener('mouseleave', showExitDefault, { signal });
+
+    resultsBackButton?.addEventListener(
+        'click',
+        () => {
+            backToStart(settingsScreen, gameScreen, resultsScreen, startButton);
+        },
+        { signal },
+    );
 
     window.addEventListener(
         'pageshow',
@@ -336,7 +390,11 @@ function renderGameBoard(): void {
 
 function getSymbolSrc(theme: Theme, symbolId: string): string {
     if (theme === 'gaming') {
-        return `${assetBase}images/cards/red/card-symbol/${encodeURIComponent(symbolId)}`;
+        if (gamingRootSymbols.has(symbolId)) {
+            return `${assetBase}images/cards/red/${symbolId}`;
+        }
+
+        return `${assetBase}images/cards/red/card-symbol/${symbolId}`;
     }
 
     return `${assetBase}images/cards/turquoise/card-symbol/${symbolId}.svg`;
@@ -386,7 +444,8 @@ function renderMemoryBoard(board: HTMLElement, theme: Theme, boardSize: BoardSiz
 }
 
 function createMemoryDeck(theme: Theme, boardSize: BoardSize): MemoryCard[] {
-    const pairCount = boardPairCount[boardSize];
+    const totalCards = Number(boardSize);
+    const pairCount = totalCards / 2;
     const selectedSymbols = shuffleArray([...themeSymbols[theme]]).slice(0, pairCount);
 
     const deck = selectedSymbols.flatMap((symbolId) => {
@@ -508,6 +567,12 @@ function resolveMatchedPair(firstId: number, secondId: number): void {
     });
 
     incrementCurrentPlayerScore();
+
+    if (isGameComplete()) {
+        window.setTimeout(() => {
+            showResultsScreen();
+        }, 500);
+    }
 }
 
 function incrementCurrentPlayerScore(): void {
@@ -529,6 +594,157 @@ function switchCurrentPlayer(): void {
 
     gameState.currentPlayer = gameState.currentPlayer === 'blue' ? 'orange' : 'blue';
     applyGameHeader();
+}
+
+function isGameComplete(): boolean {
+    return memoryCards.length > 0 && memoryCards.every((card) => card.isMatched);
+}
+
+function getGameOutcome(): GameOutcome {
+    if (gameState.blueScore === gameState.orangeScore) {
+        return 'draw';
+    }
+
+    const winner: Player = gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
+
+    if (settings.player === winner) {
+        return 'win';
+    }
+
+    return 'lose';
+}
+
+function showResultsScreen(): void {
+    const gameScreen = document.getElementById('game-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const confetti = document.getElementById('results-confetti') as HTMLImageElement | null;
+    const winnerPanel = document.getElementById('results-winner');
+    const drawPanel = document.getElementById('results-draw');
+    const gameOverPanel = document.getElementById('results-game-over');
+    const drawIcon = document.getElementById('results-draw-icon') as HTMLImageElement | null;
+
+    if (!gameScreen || !resultsScreen || !confetti || !winnerPanel || !drawPanel || !gameOverPanel || !settings.theme) {
+        return;
+    }
+
+    const themeAssets = resultsThemeAssets[settings.theme];
+    const outcome = getGameOutcome();
+
+    applyResultsTheme(resultsScreen, settings.theme);
+
+    winnerPanel.classList.add('hidden');
+    drawPanel.classList.add('hidden');
+    gameOverPanel.classList.add('hidden');
+    confetti.classList.add('hidden');
+
+    if (drawIcon) {
+        drawIcon.src = themeAssets.drawImage;
+    }
+
+    if (outcome === 'win') {
+        const winner: Player = gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
+        const winnerName = document.getElementById('results-winner-name');
+        const winnerIcon = document.getElementById('results-winner-icon') as HTMLImageElement | null;
+
+        if (winnerName) {
+            winnerName.textContent = themeAssets.winnerLabels[winner];
+            winnerName.classList.remove('results-panel__title--blue', 'results-panel__title--orange');
+            winnerName.classList.add(`results-panel__title--${winner}`);
+        }
+
+        if (winnerIcon) {
+            winnerIcon.src = themeAssets.winnerPlayerImages[winner];
+        }
+
+        if (themeAssets.confetti) {
+            confetti.src = themeAssets.confetti;
+            confetti.classList.remove('hidden');
+        }
+
+        winnerPanel.classList.remove('hidden');
+    }
+
+    if (outcome === 'draw') {
+        drawPanel.classList.remove('hidden');
+    }
+
+    if (outcome === 'lose') {
+        const blueScore = document.getElementById('results-blue-score');
+        const orangeScore = document.getElementById('results-orange-score');
+        const blueIcon = document.getElementById('results-blue-icon') as HTMLImageElement | null;
+        const orangeIcon = document.getElementById('results-orange-icon') as HTMLImageElement | null;
+
+        if (blueScore) {
+            blueScore.textContent = String(gameState.blueScore);
+        }
+
+        if (orangeScore) {
+            orangeScore.textContent = String(gameState.orangeScore);
+        }
+
+        if (blueIcon) {
+            blueIcon.src = themeAssets.scoreIcons.blue;
+        }
+
+        if (orangeIcon) {
+            orangeIcon.src = themeAssets.scoreIcons.orange;
+        }
+
+        gameOverPanel.classList.remove('hidden');
+    }
+
+    gameScreen.classList.add('hidden');
+    resultsScreen.classList.remove('hidden');
+}
+
+function applyResultsTheme(resultsScreen: HTMLElement, theme: Theme): void {
+    resultsScreen.classList.remove('results-screen--code-vibes', 'results-screen--gaming');
+    resultsScreen.classList.add(`results-screen--${theme}`);
+
+    const backButton = document.getElementById('results-back');
+    const winnerIcon = document.getElementById('results-winner-icon');
+
+    backButton?.classList.remove('results-back--code-vibes', 'results-back--gaming');
+    backButton?.classList.add(`results-back--${theme}`);
+    winnerIcon?.classList.toggle('results-panel__player-icon--gaming', theme === 'gaming');
+
+    if (backButton) {
+        backButton.setAttribute('aria-label', theme === 'gaming' ? 'Home' : 'Back to start');
+    }
+}
+
+function backToStart(
+    settingsScreen: HTMLElement,
+    gameScreen: HTMLElement,
+    resultsScreen: HTMLElement | null,
+    startButton: HTMLElement,
+): void {
+    resetSettings(startButton);
+    resetExitButton();
+    clearGameBoard();
+    resetResultsScreen();
+
+    gameScreen.classList.remove('game-screen--code-vibes', 'game-screen--gaming');
+    gameScreen.classList.add('hidden');
+    resultsScreen?.classList.add('hidden');
+    settingsScreen.classList.remove('hidden');
+}
+
+function resetResultsScreen(): void {
+    const resultsScreen = document.getElementById('results-screen');
+    const confetti = document.getElementById('results-confetti');
+    const winnerIcon = document.getElementById('results-winner-icon');
+    const backButton = document.getElementById('results-back');
+
+    resultsScreen?.classList.remove('results-screen--code-vibes', 'results-screen--gaming');
+    confetti?.classList.add('hidden');
+    document.getElementById('results-winner')?.classList.add('hidden');
+    document.getElementById('results-draw')?.classList.add('hidden');
+    document.getElementById('results-game-over')?.classList.add('hidden');
+    winnerIcon?.classList.remove('results-panel__player-icon--gaming');
+    backButton?.classList.remove('results-back--code-vibes', 'results-back--gaming');
+    backButton?.classList.add('results-back--code-vibes');
+    backButton?.setAttribute('aria-label', 'Back to start');
 }
 
 function clearGameBoard(): void {
