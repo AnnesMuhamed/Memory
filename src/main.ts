@@ -59,6 +59,17 @@ const exitImages: Record<Theme, { default: string; hover: string }> = {
     },
 };
 
+const cardBackImages: Record<Theme, string> = {
+    'code-vibes': `${assetBase}images/cards/turquoise/card_deck1.svg`,
+    gaming: `${assetBase}images/cards/red/card_deck2.svg`,
+};
+
+const boardColumns: Record<BoardSize, number> = {
+    '16': 4,
+    '24': 6,
+    '36': 6,
+};
+
 const settings: GameSettings = {
     theme: null,
     player: null,
@@ -173,6 +184,7 @@ function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
     gameState.currentPlayer = settings.player;
 
     applyGameHeader();
+    renderGameBoard();
 
     settingsScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
@@ -181,6 +193,7 @@ function startGame(settingsScreen: HTMLElement, gameScreen: HTMLElement): void {
 function exitGame(settingsScreen: HTMLElement, gameScreen: HTMLElement, startButton: HTMLElement): void {
     resetSettings(startButton);
     resetExitButton();
+    clearGameBoard();
 
     gameScreen.classList.remove('game-screen--code-vibes', 'game-screen--gaming');
     gameScreen.classList.add('hidden');
@@ -239,6 +252,51 @@ function applyGameHeader(): void {
     }
 
     applyExitButton();
+}
+
+function renderGameBoard(): void {
+    const board = document.getElementById('game-board');
+
+    if (!board || !settings.boardSize || !settings.theme) {
+        return;
+    }
+
+    clearGameBoard();
+
+    const cardCount = Number(settings.boardSize);
+    const columns = boardColumns[settings.boardSize];
+    const cardBack = cardBackImages[settings.theme];
+
+    board.classList.add(`game-board--${settings.theme}`);
+    board.style.setProperty('--board-columns', String(columns));
+
+    for (let index = 0; index < cardCount; index += 1) {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `game-card game-card--${settings.theme}`;
+        card.setAttribute('aria-label', `Card ${index + 1}`);
+
+        const image = document.createElement('img');
+        image.className = 'game-card__image';
+        image.src = cardBack;
+        image.alt = '';
+        image.setAttribute('aria-hidden', 'true');
+
+        card.appendChild(image);
+        board.appendChild(card);
+    }
+}
+
+function clearGameBoard(): void {
+    const board = document.getElementById('game-board');
+
+    if (!board) {
+        return;
+    }
+
+    board.innerHTML = '';
+    board.className = 'game-board';
+    board.style.removeProperty('--board-columns');
 }
 
 function applyScoreIcons(): void {
