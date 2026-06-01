@@ -6,7 +6,7 @@
     <title>Memory Game</title>
 </head>
 <body>
-    <main class="home-screen">
+    <main class="home-screen" id="home-screen">
         <img
             class="home-screen__controller"
             src="/images/cards/controller.svg"
@@ -17,9 +17,117 @@
         <section class="home-content" aria-label="Startbildschirm">
             <p class="home-content__subtitle">It&rsquo;s play time.</p>
             <h1 class="home-content__title">Ready to play?</h1>
-            <button class="play-button" type="button" aria-label="Play"></button>
+            <button class="play-button" id="play-button" type="button" aria-label="Play"></button>
         </section>
     </main>
+
+    <section class="settings-screen hidden" id="settings-screen" aria-label="Settings">
+        <div class="settings-screen__layout">
+            <header class="settings-header">
+                <h1 class="settings-header__title">Settings</h1>
+                <img class="settings-header__line" src="/images/cards/big_line.svg" alt="" aria-hidden="true">
+            </header>
+
+            <div class="settings-panel">
+                <fieldset class="settings-group">
+                    <legend class="settings-group__legend">
+                        <img class="settings-group__icon" src="/images/cards/color_palette.svg" alt="" aria-hidden="true">
+                        Game themes
+                    </legend>
+                    <div class="settings-group__options">
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="theme" value="code-vibes">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">Code vibes theme</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="theme" value="gaming">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">Gaming theme</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="settings-group">
+                    <legend class="settings-group__legend">
+                        <span class="settings-group__icon settings-group__icon--player" aria-hidden="true"></span>
+                        Choose player
+                    </legend>
+                    <div class="settings-group__options">
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="player" value="blue">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">Blue</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="player" value="orange">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">Orange</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="settings-group">
+                    <legend class="settings-group__legend">
+                        <span class="settings-group__icon settings-group__icon--board" aria-hidden="true"></span>
+                        Board size
+                    </legend>
+                    <div class="settings-group__options">
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="board-size" value="16">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">16 cards</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="board-size" value="24">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">24 cards</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                        <label class="settings-option">
+                            <input class="settings-option__input" type="radio" name="board-size" value="36">
+                            <img class="settings-option__radio settings-option__radio--unchecked" src="/images/cards/unchecked.svg" alt="">
+                            <img class="settings-option__radio settings-option__radio--checked" src="/images/cards/checked.svg" alt="">
+                            <span class="settings-option__label">36 cards</span>
+                            <img class="settings-option__line" src="/images/cards/small_line.svg" alt="" aria-hidden="true">
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="settings-preview">
+                <img
+                    class="settings-preview__theme"
+                    id="settings-preview-image"
+                    src=""
+                    alt="Theme preview"
+                    hidden
+                >
+
+                <div class="settings-footer">
+                    <div class="settings-footer__labels">
+                        <span>Game theme</span>
+                        <img src="/images/cards/slash.svg" alt="" aria-hidden="true">
+                        <span>Player</span>
+                        <img src="/images/cards/slash.svg" alt="" aria-hidden="true">
+                        <span>Board size</span>
+                    </div>
+                    <button class="settings-start settings-start--disabled" id="settings-start" type="button" disabled aria-label="Start"></button>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <script type="module" src="/src/main.ts"></script>
 </body>
