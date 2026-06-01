@@ -739,8 +739,8 @@ body {
     aspect-ratio: 1;
     width: 100%;
 
-    &--code-vibes {
-        border-radius: 4px;
+    &--code-vibes,
+    &--gaming {
         perspective: 1000px;
 
         .game-card__inner {
@@ -782,6 +782,10 @@ body {
                 transition: opacity 0.25s ease;
             }
         }
+    }
+
+    &--code-vibes {
+        border-radius: 4px;
     }
 
     &--gaming {

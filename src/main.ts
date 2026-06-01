@@ -97,11 +97,33 @@ const codeVibesSymbols = [
     'vue',
 ] as const;
 
-type CodeVibesSymbol = (typeof codeVibesSymbols)[number];
+const gamingSymbols = [
+    'Property 1=Component 2 (1).svg',
+    'Property 1=Component 2 (2).svg',
+    'Property 1=Component 2 (3).svg',
+    'Property 1=Component 2 (4).svg',
+    'Property 1=Component 2 (5).svg',
+    'Property 1=Component 2 (6).svg',
+    'Property 1=Component 2 (7).svg',
+    'Property 1=Component 2 (8).svg',
+    'Property 1=Component 2 (9).svg',
+    'Property 1=Component 2 (10).svg',
+    'Property 1=Component 2 (11).svg',
+    'Property 1=Component 2 (12).svg',
+    'Property 1=Component 2 (13).svg',
+    'Property 1=Component 2 (14).svg',
+    'Property 1=Component 2 (15).svg',
+    'Property 1=Component 2 (16).svg',
+] as const;
+
+const themeSymbols: Record<Theme, readonly string[]> = {
+    'code-vibes': codeVibesSymbols,
+    gaming: gamingSymbols,
+};
 
 interface MemoryCard {
     id: number;
-    symbolId: CodeVibesSymbol;
+    symbolId: string;
     symbolSrc: string;
     isFlipped: boolean;
     isMatched: boolean;
@@ -309,43 +331,26 @@ function renderGameBoard(): void {
     board.classList.add(`game-board--${settings.theme}`);
     board.style.setProperty('--board-columns', String(columns));
 
-    if (settings.theme === 'code-vibes') {
-        renderCodeVibesMemoryBoard(board, settings.boardSize);
-        return;
-    }
-
-    renderStaticBoard(board, settings.theme, Number(settings.boardSize));
+    renderMemoryBoard(board, settings.theme, settings.boardSize);
 }
 
-function renderStaticBoard(board: HTMLElement, theme: Theme, cardCount: number): void {
-    const cardBack = cardBackImages[theme];
-
-    for (let index = 0; index < cardCount; index += 1) {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = `game-card game-card--${theme}`;
-        card.setAttribute('aria-label', `Card ${index + 1}`);
-
-        const image = document.createElement('img');
-        image.className = 'game-card__image';
-        image.src = cardBack;
-        image.alt = '';
-        image.setAttribute('aria-hidden', 'true');
-
-        card.appendChild(image);
-        board.appendChild(card);
+function getSymbolSrc(theme: Theme, symbolId: string): string {
+    if (theme === 'gaming') {
+        return `${assetBase}images/cards/red/card-symbol/${encodeURIComponent(symbolId)}`;
     }
+
+    return `${assetBase}images/cards/turquoise/card-symbol/${symbolId}.svg`;
 }
 
-function renderCodeVibesMemoryBoard(board: HTMLElement, boardSize: BoardSize): void {
-    memoryCards = createMemoryDeck(boardSize);
+function renderMemoryBoard(board: HTMLElement, theme: Theme, boardSize: BoardSize): void {
+    memoryCards = createMemoryDeck(theme, boardSize);
     flippedCardIds = [];
     isBoardLocked = false;
 
     memoryCards.forEach((cardData) => {
         const card = document.createElement('button');
         card.type = 'button';
-        card.className = 'game-card game-card--code-vibes';
+        card.className = `game-card game-card--${theme}`;
         card.dataset.cardId = String(cardData.id);
         card.setAttribute('aria-label', 'Hidden card');
 
@@ -365,7 +370,7 @@ function renderCodeVibesMemoryBoard(board: HTMLElement, boardSize: BoardSize): v
         back.className = 'game-card__face game-card__face--back';
 
         const backImage = document.createElement('img');
-        backImage.src = cardBackImages['code-vibes'];
+        backImage.src = cardBackImages[theme];
         backImage.alt = '';
         backImage.setAttribute('aria-hidden', 'true');
         back.appendChild(backImage);
@@ -377,15 +382,15 @@ function renderCodeVibesMemoryBoard(board: HTMLElement, boardSize: BoardSize): v
     });
 
     boardAbortController = new AbortController();
-    board.addEventListener('click', handleCodeVibesCardClick, { signal: boardAbortController.signal });
+    board.addEventListener('click', handleMemoryCardClick, { signal: boardAbortController.signal });
 }
 
-function createMemoryDeck(boardSize: BoardSize): MemoryCard[] {
+function createMemoryDeck(theme: Theme, boardSize: BoardSize): MemoryCard[] {
     const pairCount = boardPairCount[boardSize];
-    const selectedSymbols = shuffleArray([...codeVibesSymbols]).slice(0, pairCount);
+    const selectedSymbols = shuffleArray([...themeSymbols[theme]]).slice(0, pairCount);
 
     const deck = selectedSymbols.flatMap((symbolId) => {
-        const symbolSrc = `${assetBase}images/cards/turquoise/card-symbol/${symbolId}.svg`;
+        const symbolSrc = getSymbolSrc(theme, symbolId);
 
         return [
             { symbolId, symbolSrc, isFlipped: false, isMatched: false },
@@ -410,7 +415,7 @@ function shuffleArray<T>(items: T[]): T[] {
     return shuffled;
 }
 
-function handleCodeVibesCardClick(event: Event): void {
+function handleMemoryCardClick(event: Event): void {
     if (isBoardLocked) {
         return;
     }
