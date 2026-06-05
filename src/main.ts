@@ -25,13 +25,7 @@ function init(): void {
         startGame();
     }, signal);
 
-    initGame(() => {
-        const startButton = getStartButton();
-        if (startButton) {
-            resetSettings(startButton);
-        }
-        exitGame();
-    }, signal);
+    initGame(signal);
 
     initExitConfirm(() => {
         const startButton = getStartButton();
