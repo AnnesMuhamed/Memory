@@ -16,7 +16,7 @@ let boardAbortController: AbortController | null = null;
  * @returns The list of memory card data.
  */
 export function getMemoryCards(): MemoryCard[] {
-    return memoryCards;
+  return memoryCards;
 }
 
 /**
@@ -25,7 +25,7 @@ export function getMemoryCards(): MemoryCard[] {
  * @param cards - The card data to store.
  */
 export function setMemoryCards(cards: MemoryCard[]): void {
-    memoryCards = cards;
+  memoryCards = cards;
 }
 
 /**
@@ -34,7 +34,7 @@ export function setMemoryCards(cards: MemoryCard[]): void {
  * @returns The flipped card IDs.
  */
 export function getFlippedCardIds(): number[] {
-    return flippedCardIds;
+  return flippedCardIds;
 }
 
 /**
@@ -43,7 +43,7 @@ export function getFlippedCardIds(): number[] {
  * @param ids - The flipped card IDs to store.
  */
 export function setFlippedCardIds(ids: number[]): void {
-    flippedCardIds = ids;
+  flippedCardIds = ids;
 }
 
 /**
@@ -52,7 +52,7 @@ export function setFlippedCardIds(ids: number[]): void {
  * @returns True when clicks are blocked.
  */
 export function getBoardIsLocked(): boolean {
-    return boardIsLocked;
+  return boardIsLocked;
 }
 
 /**
@@ -61,7 +61,7 @@ export function getBoardIsLocked(): boolean {
  * @param locked - True to block clicks, false to allow them.
  */
 export function setBoardIsLocked(locked: boolean): void {
-    boardIsLocked = locked;
+  boardIsLocked = locked;
 }
 
 /**
@@ -70,7 +70,7 @@ export function setBoardIsLocked(locked: boolean): void {
  * @returns The active controller, or null if none exists.
  */
 export function getBoardAbortController(): AbortController | null {
-    return boardAbortController;
+  return boardAbortController;
 }
 
 /**
@@ -79,26 +79,26 @@ export function getBoardAbortController(): AbortController | null {
  * @param controller - The controller to store, or null to clear it.
  */
 export function setBoardAbortController(controller: AbortController | null): void {
-    boardAbortController = controller;
+  boardAbortController = controller;
 }
 
 /**
  * Clears all memory board state and aborts active listeners.
  */
 export function resetMemoryBoardState(): void {
-    boardAbortController?.abort();
-    boardAbortController = null;
-    memoryCards = [];
-    flippedCardIds = [];
-    boardIsLocked = false;
+  boardAbortController?.abort();
+  boardAbortController = null;
+  memoryCards = [];
+  flippedCardIds = [];
+  boardIsLocked = false;
 }
 
 /**
  * Clears flipped cards and unlocks the board.
  */
 export function resetFlippedCards(): void {
-    flippedCardIds = [];
-    boardIsLocked = false;
+  flippedCardIds = [];
+  boardIsLocked = false;
 }
 
 /**
@@ -108,7 +108,7 @@ export function resetFlippedCards(): void {
  * @returns The matching card, or undefined if not found.
  */
 export function getCardById(cardId: number): MemoryCard | undefined {
-    return memoryCards[cardId];
+  return memoryCards[cardId];
 }
 
 /**
@@ -118,5 +118,5 @@ export function getCardById(cardId: number): MemoryCard | undefined {
  * @returns The card button element, or null if not found.
  */
 export function getCardButton(cardId: number): HTMLButtonElement | null {
-    return document.getElementById(`game-card-${cardId}`) as HTMLButtonElement | null;
+  return document.getElementById(`game-card-${cardId}`) as HTMLButtonElement | null;
 }

@@ -6,8 +6,8 @@ import type { Theme } from '../../../types/game';
  * @param gameScreen - The game screen root element.
  */
 export function applyGamingGameScreen(gameScreen: HTMLElement): void {
-    gameScreen.classList.remove('game-screen--code-vibes');
-    gameScreen.classList.add('game-screen--gaming');
+  gameScreen.classList.remove('game-screen--code-vibes');
+  gameScreen.classList.add('game-screen--gaming');
 }
 
 /**
@@ -17,5 +17,5 @@ export function applyGamingGameScreen(gameScreen: HTMLElement): void {
  * @returns True when the theme is `'gaming'`.
  */
 export function isGamingTheme(theme: Theme | null): theme is 'gaming' {
-    return theme === 'gaming';
+  return theme === 'gaming';
 }

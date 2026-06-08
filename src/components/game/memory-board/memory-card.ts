@@ -1,5 +1,7 @@
 import type { MemoryCard, Theme } from '../../../types/game';
-import { cardBackImages } from '../../../constants/assets';
+
+import { CARD_BACK_IMAGES } from '../../../constants/assets';
+
 import { getCardButton } from './memory-board-state';
 
 /**
@@ -10,13 +12,13 @@ import { getCardButton } from './memory-board-state';
  * @returns The card button element.
  */
 export function createCardElement(cardData: MemoryCard, theme: Theme): HTMLButtonElement {
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.id = `game-card-${cardData.id}`;
-    card.className = `game-card game-card--${theme}`;
-    card.setAttribute('aria-label', 'Hidden card');
-    card.appendChild(buildCardInner(cardData, theme));
-    return card;
+  const card = document.createElement('button');
+  card.type = 'button';
+  card.id = `game-card-${cardData.id}`;
+  card.className = `game-card game-card--${theme}`;
+  card.setAttribute('aria-label', 'Hidden card');
+  card.appendChild(buildCardInner(cardData, theme));
+  return card;
 }
 
 /**
@@ -27,11 +29,11 @@ export function createCardElement(cardData: MemoryCard, theme: Theme): HTMLButto
  * @returns The inner card container element.
  */
 function buildCardInner(cardData: MemoryCard, theme: Theme): HTMLDivElement {
-    const inner = document.createElement('div');
-    inner.className = 'game-card__inner';
-    inner.appendChild(buildCardFace('front', cardData.symbolSrc));
-    inner.appendChild(buildCardFace('back', cardBackImages[theme]));
-    return inner;
+  const inner = document.createElement('div');
+  inner.className = 'game-card__inner';
+  inner.appendChild(buildCardFace('front', cardData.symbolSrc));
+  inner.appendChild(buildCardFace('back', CARD_BACK_IMAGES[theme]));
+  return inner;
 }
 
 /**
@@ -42,14 +44,14 @@ function buildCardInner(cardData: MemoryCard, theme: Theme): HTMLDivElement {
  * @returns The card face element.
  */
 function buildCardFace(side: 'front' | 'back', imageSrc: string): HTMLDivElement {
-    const face = document.createElement('div');
-    face.className = `game-card__face game-card__face--${side}`;
-    const image = document.createElement('img');
-    image.src = imageSrc;
-    image.alt = '';
-    image.setAttribute('aria-hidden', 'true');
-    face.appendChild(image);
-    return face;
+  const face = document.createElement('div');
+  face.className = `game-card__face game-card__face--${side}`;
+  const image = document.createElement('img');
+  image.src = imageSrc;
+  image.alt = '';
+  image.setAttribute('aria-hidden', 'true');
+  face.appendChild(image);
+  return face;
 }
 
 /**
@@ -60,13 +62,13 @@ function buildCardFace(side: 'front' | 'back', imageSrc: string): HTMLDivElement
  * @param symbolId - The symbol ID used for the aria label.
  */
 export function updateCardFlipState(cardId: number, flipped: boolean, symbolId: string): void {
-    const cardButton = getCardButton(cardId);
-    if (!cardButton) {
-        return;
-    }
-    cardButton.classList.toggle('game-card--flipped', flipped);
-    const label = flipped ? `Revealed ${symbolId} card` : 'Hidden card';
-    cardButton.setAttribute('aria-label', label);
+  const cardButton = getCardButton(cardId);
+  if (!cardButton) {
+    return;
+  }
+  cardButton.classList.toggle('game-card--flipped', flipped);
+  const label = flipped ? `Revealed ${symbolId} card` : 'Hidden card';
+  cardButton.setAttribute('aria-label', label);
 }
 
 /**
@@ -75,12 +77,12 @@ export function updateCardFlipState(cardId: number, flipped: boolean, symbolId: 
  * @param cardId - The ID of the matched card.
  */
 export function markCardAsMatchedSlot(cardId: number): void {
-    const cardButton = getCardButton(cardId);
-    if (!cardButton) {
-        return;
-    }
-    cardButton.classList.add('game-card--flipped', 'game-card--matched');
-    cardButton.disabled = true;
-    cardButton.setAttribute('aria-label', 'Empty slot');
-    cardButton.setAttribute('aria-hidden', 'true');
+  const cardButton = getCardButton(cardId);
+  if (!cardButton) {
+    return;
+  }
+  cardButton.classList.add('game-card--flipped', 'game-card--matched');
+  cardButton.disabled = true;
+  cardButton.setAttribute('aria-label', 'Empty slot');
+  cardButton.setAttribute('aria-hidden', 'true');
 }

@@ -1,5 +1,6 @@
-import { assetBase, gamingRootSymbols } from '../../../constants/assets';
 import type { Theme } from '../../../types/game';
+
+import { ASSET_BASE, GAMING_ROOT_SYMBOLS } from '../../../constants/assets';
 
 /**
  * Builds the asset URL for a Code Vibes card symbol.
@@ -8,7 +9,7 @@ import type { Theme } from '../../../types/game';
  * @returns The full URL to the symbol SVG.
  */
 export function getCodeVibesSymbolSrc(symbolId: string): string {
-    return `${assetBase}images/cards/turquoise/card-symbol/${symbolId}.svg`;
+  return `${ASSET_BASE}images/cards/turquoise/card-symbol/${symbolId}.svg`;
 }
 
 /**
@@ -18,11 +19,10 @@ export function getCodeVibesSymbolSrc(symbolId: string): string {
  * @returns The full URL to the symbol SVG.
  */
 export function getGamingSymbolSrc(symbolId: string): string {
-    if (gamingRootSymbols.has(symbolId)) {
-        return `${assetBase}images/cards/red/${symbolId}`;
-    }
-
-    return `${assetBase}images/cards/red/card-symbol/${symbolId}`;
+  if (GAMING_ROOT_SYMBOLS.has(symbolId)) {
+    return `${ASSET_BASE}images/cards/red/${symbolId}`;
+  }
+  return `${ASSET_BASE}images/cards/red/card-symbol/${symbolId}`;
 }
 
 /**
@@ -33,11 +33,10 @@ export function getGamingSymbolSrc(symbolId: string): string {
  * @returns The full URL to the symbol asset.
  */
 export function getSymbolSrc(theme: Theme, symbolId: string): string {
-    if (theme === 'gaming') {
-        return getGamingSymbolSrc(symbolId);
-    }
-
-    return getCodeVibesSymbolSrc(symbolId);
+  if (theme === 'gaming') {
+    return getGamingSymbolSrc(symbolId);
+  }
+  return getCodeVibesSymbolSrc(symbolId);
 }
 
 /**
@@ -46,6 +45,6 @@ export function getSymbolSrc(theme: Theme, symbolId: string): string {
  * @param gameScreen - The game screen root element.
  */
 export function applyCodeVibesGameScreen(gameScreen: HTMLElement): void {
-    gameScreen.classList.remove('game-screen--gaming');
-    gameScreen.classList.add('game-screen--code-vibes');
+  gameScreen.classList.remove('game-screen--gaming');
+  gameScreen.classList.add('game-screen--code-vibes');
 }

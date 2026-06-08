@@ -1,6 +1,8 @@
 import type { BoardSize, MemoryCard, Theme } from '../../../types/game';
-import { themeSymbols } from '../../../constants/assets';
+
+import { THEME_SYMBOLS } from '../../../constants/assets';
 import { shuffleArray } from '../../../utils/shuffle';
+
 import { getSymbolSrc } from '../code-vibes-theme/code-vibes-theme';
 
 /**
@@ -11,10 +13,10 @@ import { getSymbolSrc } from '../code-vibes-theme/code-vibes-theme';
  * @returns An array of memory card data with unique IDs.
  */
 export function createMemoryDeck(theme: Theme, boardSize: BoardSize): MemoryCard[] {
-    const pairCount = Number(boardSize) / 2;
-    const symbols = shuffleArray([...themeSymbols[theme]]).slice(0, pairCount);
-    const pairs = buildPairs(theme, symbols);
-    return shuffleArray(pairs).map((card, index) => ({ ...card, id: index }));
+  const pairCount = Number(boardSize) / 2;
+  const symbols = shuffleArray([...THEME_SYMBOLS[theme]]).slice(0, pairCount);
+  const pairs = buildPairs(theme, symbols);
+  return shuffleArray(pairs).map((card, index) => ({ ...card, id: index }));
 }
 
 /**
@@ -25,9 +27,9 @@ export function createMemoryDeck(theme: Theme, boardSize: BoardSize): MemoryCard
  * @returns Card data without IDs, two entries per symbol.
  */
 function buildPairs(theme: Theme, symbols: string[]): Omit<MemoryCard, 'id'>[] {
-    return symbols.flatMap((symbolId) => {
-        const symbolSrc = getSymbolSrc(theme, symbolId);
-        const pair = { symbolId, symbolSrc, isFlipped: false, isMatched: false };
-        return [pair, { ...pair }];
-    });
+  return symbols.flatMap((symbolId) => {
+    const symbolSrc = getSymbolSrc(theme, symbolId);
+    const pair = { symbolId, symbolSrc, isFlipped: false, isMatched: false };
+    return [pair, { ...pair }];
+  });
 }

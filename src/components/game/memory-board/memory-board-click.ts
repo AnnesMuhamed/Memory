@@ -1,18 +1,17 @@
-import {
-    getBoardIsLocked,
-    getCardById,
-    getFlippedCardIds,
-    getMemoryCards,
-    setBoardIsLocked,
-    setFlippedCardIds,
-} from './memory-board-state';
-import { markCardAsMatchedSlot, updateCardFlipState } from './memory-card';
+import { MATCH_DELAY_MS, MISMATCH_DELAY_MS, RESULTS_DELAY_MS } from '../../../constants/timing';
+
 import { incrementCurrentPlayerScore, switchCurrentPlayer } from '../game-header';
 import { showResultsScreen } from '../../results/results';
 
-const matchDelayMs = 400;
-const mismatchDelayMs = 800;
-const resultsDelayMs = 500;
+import {
+  getBoardIsLocked,
+  getCardById,
+  getFlippedCardIds,
+  getMemoryCards,
+  setBoardIsLocked,
+  setFlippedCardIds,
+} from './memory-board-state';
+import { markCardAsMatchedSlot, updateCardFlipState } from './memory-card';
 
 /**
  * Handles a click on a memory card and processes flip, match, or mismatch logic.
@@ -20,18 +19,18 @@ const resultsDelayMs = 500;
  * @param event - The click event from the game board.
  */
 export function handleMemoryCardClick(event: Event): void {
-    if (getBoardIsLocked()) {
-        return;
-    }
-    const cardId = getClickedCardId(event);
-    if (cardId === null || !canFlipCard(cardId)) {
-        return;
-    }
-    flipCard(cardId);
-    if (getFlippedCardIds().length < 2) {
-        return;
-    }
-    processFlippedPair();
+  if (getBoardIsLocked()) {
+    return;
+  }
+  const cardId = getClickedCardId(event);
+  if (cardId === null || !canFlipCard(cardId)) {
+    return;
+  }
+  flipCard(cardId);
+  if (getFlippedCardIds().length < 2) {
+    return;
+  }
+  processFlippedPair();
 }
 
 /**
@@ -41,12 +40,12 @@ export function handleMemoryCardClick(event: Event): void {
  * @returns The card ID, or null when no valid card was clicked.
  */
 function getClickedCardId(event: Event): number | null {
-    const target = event.target as HTMLElement;
-    const cardButton = target.closest('.game-card') as HTMLButtonElement | null;
-    if (!cardButton || cardButton.disabled) {
-        return null;
-    }
-    return Number(cardButton.id.replace('game-card-', ''));
+  const target = event.target as HTMLElement;
+  const cardButton = target.closest('.game-card') as HTMLButtonElement | null;
+  if (!cardButton || cardButton.disabled) {
+    return null;
+  }
+  return Number(cardButton.id.replace('game-card-', ''));
 }
 
 /**
@@ -56,8 +55,8 @@ function getClickedCardId(event: Event): number | null {
  * @returns True when the card exists and is not matched or already flipped.
  */
 function canFlipCard(cardId: number): boolean {
-    const card = getCardById(cardId);
-    return Boolean(card && !card.isMatched && !card.isFlipped);
+  const card = getCardById(cardId);
+  return Boolean(card && !card.isMatched && !card.isFlipped);
 }
 
 /**
@@ -66,31 +65,31 @@ function canFlipCard(cardId: number): boolean {
  * @param cardId - The card ID to flip.
  */
 function flipCard(cardId: number): void {
-    const card = getCardById(cardId);
-    if (!card) {
-        return;
-    }
-    card.isFlipped = true;
-    updateCardFlipState(cardId, true, card.symbolId);
-    setFlippedCardIds([...getFlippedCardIds(), cardId]);
+  const card = getCardById(cardId);
+  if (!card) {
+    return;
+  }
+  card.isFlipped = true;
+  updateCardFlipState(cardId, true, card.symbolId);
+  setFlippedCardIds([...getFlippedCardIds(), cardId]);
 }
 
 /**
  * Compares two flipped cards and schedules the match result.
  */
 function processFlippedPair(): void {
-    setBoardIsLocked(true);
-    const [firstId, secondId] = getFlippedCardIds();
-    const firstCard = getCardById(firstId);
-    const secondCard = getCardById(secondId);
-    if (!firstCard || !secondCard) {
-        return;
-    }
-    if (firstCard.symbolId === secondCard.symbolId) {
-        scheduleMatch(firstId, secondId);
-        return;
-    }
-    scheduleMismatch(firstId, secondId);
+  setBoardIsLocked(true);
+  const [firstId, secondId] = getFlippedCardIds();
+  const firstCard = getCardById(firstId);
+  const secondCard = getCardById(secondId);
+  if (!firstCard || !secondCard) {
+    return;
+  }
+  if (firstCard.symbolId === secondCard.symbolId) {
+    scheduleMatch(firstId, secondId);
+    return;
+  }
+  scheduleMismatch(firstId, secondId);
 }
 
 /**
@@ -100,11 +99,11 @@ function processFlippedPair(): void {
  * @param secondId - The ID of the second matched card.
  */
 function scheduleMatch(firstId: number, secondId: number): void {
-    window.setTimeout(() => {
-        resolveMatchedPair(firstId, secondId);
-        setFlippedCardIds([]);
-        setBoardIsLocked(false);
-    }, matchDelayMs);
+  window.setTimeout(() => {
+    resolveMatchedPair(firstId, secondId);
+    setFlippedCardIds([]);
+    setBoardIsLocked(false);
+  }, MATCH_DELAY_MS);
 }
 
 /**
@@ -114,13 +113,13 @@ function scheduleMatch(firstId: number, secondId: number): void {
  * @param secondId - The ID of the second flipped card.
  */
 function scheduleMismatch(firstId: number, secondId: number): void {
-    window.setTimeout(() => {
-        unflipCard(firstId);
-        unflipCard(secondId);
-        switchCurrentPlayer();
-        setFlippedCardIds([]);
-        setBoardIsLocked(false);
-    }, mismatchDelayMs);
+  window.setTimeout(() => {
+    unflipCard(firstId);
+    unflipCard(secondId);
+    switchCurrentPlayer();
+    setFlippedCardIds([]);
+    setBoardIsLocked(false);
+  }, MISMATCH_DELAY_MS);
 }
 
 /**
@@ -129,12 +128,12 @@ function scheduleMismatch(firstId: number, secondId: number): void {
  * @param cardId - The card ID to unflip.
  */
 function unflipCard(cardId: number): void {
-    const card = getCardById(cardId);
-    if (!card) {
-        return;
-    }
-    card.isFlipped = false;
-    updateCardFlipState(cardId, false, card.symbolId);
+  const card = getCardById(cardId);
+  if (!card) {
+    return;
+  }
+  card.isFlipped = false;
+  updateCardFlipState(cardId, false, card.symbolId);
 }
 
 /**
@@ -144,12 +143,12 @@ function unflipCard(cardId: number): void {
  * @param secondId - The ID of the second matched card.
  */
 function resolveMatchedPair(firstId: number, secondId: number): void {
-    markPairAsMatched(firstId);
-    markPairAsMatched(secondId);
-    incrementCurrentPlayerScore();
-    if (isGameComplete()) {
-        window.setTimeout(showResultsScreen, resultsDelayMs);
-    }
+  markPairAsMatched(firstId);
+  markPairAsMatched(secondId);
+  incrementCurrentPlayerScore();
+  if (isGameComplete()) {
+    window.setTimeout(showResultsScreen, RESULTS_DELAY_MS);
+  }
 }
 
 /**
@@ -158,13 +157,13 @@ function resolveMatchedPair(firstId: number, secondId: number): void {
  * @param cardId - The card ID to mark as matched.
  */
 function markPairAsMatched(cardId: number): void {
-    const card = getCardById(cardId);
-    if (!card) {
-        return;
-    }
-    card.isMatched = true;
-    card.isFlipped = true;
-    markCardAsMatchedSlot(cardId);
+  const card = getCardById(cardId);
+  if (!card) {
+    return;
+  }
+  card.isMatched = true;
+  card.isFlipped = true;
+  markCardAsMatchedSlot(cardId);
 }
 
 /**
@@ -173,6 +172,6 @@ function markPairAsMatched(cardId: number): void {
  * @returns True when all cards are matched.
  */
 function isGameComplete(): boolean {
-    const cards = getMemoryCards();
-    return cards.length > 0 && cards.every((card) => card.isMatched);
+  const cards = getMemoryCards();
+  return cards.length > 0 && cards.every((card) => card.isMatched);
 }
