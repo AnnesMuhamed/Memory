@@ -5,6 +5,7 @@ import { gameState } from '../../state/game-state';
 import { resetSettings, getSettingsScreen, getStartButton } from '../settings/settings';
 import { clearGameBoard, resetExitButton } from '../game/game';
 import { hideDrawPanel, showDrawPanel } from './draw/draw';
+import { hideFinalScore, showFinalScore } from './final-score/final-score';
 import { hideGameOverPanel, showGameOverPanel } from './game-over/game-over';
 import { resetWinnerPanel, showWinnerPanel } from './winner/winner';
 import './results.scss';
@@ -42,6 +43,7 @@ export function showResultsScreen(): void {
 
     applyResultsTheme(resultsScreen, settings.theme);
     hideAllResultPanels();
+    showFinalScore(themeAssets);
 
     if (outcome === 'win') {
         const winner: Player = gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
@@ -53,7 +55,7 @@ export function showResultsScreen(): void {
     }
 
     if (outcome === 'lose') {
-        showGameOverPanel(themeAssets);
+        showGameOverPanel();
     }
 
     gameScreen.classList.add('hidden');
@@ -132,6 +134,7 @@ function hideAllResultPanels(): void {
     resetWinnerPanel();
     hideDrawPanel();
     hideGameOverPanel();
+    hideFinalScore();
 }
 
 /**

@@ -13,9 +13,9 @@ export const playerLabels: Record<Player, string> = {
 };
 
 export const boardLabels: Record<BoardSize, string> = {
-    '16': 'Board-16 Cards',
-    '24': 'Board-24 Cards',
-    '36': 'Board-36 Cards',
+    '16': '4×4',
+    '24': '4×6',
+    '36': '6×6',
 };
 
 export const slashDefault = `${assetBase}images/cards/slash.svg`;
