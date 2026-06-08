@@ -7,6 +7,11 @@ export const THEME_PREVIEW_IMAGES: Record<Theme, string> = {
   gaming: `${ASSET_BASE}images/cards/gaming_theme.svg`,
 };
 
+export const THEME_LABELS: Record<Theme, string> = {
+  'code-vibes': 'Code vibes theme',
+  gaming: 'Gaming theme',
+};
+
 export const PLAYER_LABELS: Record<Player, string> = {
   blue: 'Blue Player',
   orange: 'Orange Player',

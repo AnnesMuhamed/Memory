@@ -5,12 +5,15 @@ import {
   PLAYER_LABELS,
   SLASH_DEFAULT,
   SLASH_SELECTED,
+  THEME_LABELS,
   THEME_PREVIEW_IMAGES,
 } from '../../constants/assets';
 import { gameState } from '../../state/game-state';
 import { settings, SETTINGS_STORAGE_KEY } from '../../state/settings';
 
 import './settings.scss';
+
+const DEFAULT_THEME: Theme = 'code-vibes';
 
 /**
  * Initializes settings form listeners and the start button.
@@ -28,6 +31,20 @@ export function initSettings(onStart: () => void, signal: AbortSignal): void {
 }
 
 /**
+ * Applies default theme selection and refreshes the settings UI.
+ */
+export function prepareSettingsScreen(): void {
+  const startButton = getStartButton();
+  if (!startButton) {
+    return;
+  }
+  if (settings.theme === null) {
+    selectTheme(DEFAULT_THEME);
+  }
+  refreshSettingsUi(startButton);
+}
+
+/**
  * Resets all settings, game state, and UI to their initial values.
  *
  * @param startButton - The settings start button element to update.
@@ -36,9 +53,8 @@ export function resetSettings(startButton: HTMLElement): void {
   resetSettingsState();
   resetSettingsInputs();
   clearGameStorage();
-  updateFooter();
-  updateStartButton(startButton);
-  updatePreview();
+  selectTheme(DEFAULT_THEME);
+  refreshSettingsUi(startButton);
 }
 
 /**
@@ -184,7 +200,7 @@ function updateFooterLabels(): void {
   if (!themeLabel || !playerLabel || !boardLabel) {
     return;
   }
-  themeLabel.textContent = settings.theme ? 'Game theme' : 'Theme';
+  themeLabel.textContent = settings.theme ? THEME_LABELS[settings.theme] : 'Theme';
   playerLabel.textContent = settings.player ? PLAYER_LABELS[settings.player] : 'Player';
   boardLabel.textContent = settings.boardSize ? BOARD_LABELS[settings.boardSize] : 'Board size';
 }
@@ -232,6 +248,30 @@ function updatePreview(): void {
   }
   previewImage.hidden = true;
   previewImage.removeAttribute('src');
+}
+
+/**
+ * Selects a theme radio input and stores the theme in settings state.
+ *
+ * @param theme - The theme value to select.
+ */
+function selectTheme(theme: Theme): void {
+  const themeInput = document.querySelector<HTMLInputElement>(`input[name="theme"][value="${theme}"]`);
+  if (themeInput) {
+    themeInput.checked = true;
+  }
+  settings.theme = theme;
+}
+
+/**
+ * Refreshes footer, preview, and start button after a settings change.
+ *
+ * @param startButton - The settings start button element to update.
+ */
+function refreshSettingsUi(startButton: HTMLElement): void {
+  updateFooter();
+  updateStartButton(startButton);
+  updatePreview();
 }
 
 /**

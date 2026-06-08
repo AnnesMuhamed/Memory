@@ -1,3 +1,5 @@
+import { prepareSettingsScreen } from '../settings/settings';
+
 import './start-screen.scss';
 
 /**
@@ -23,6 +25,7 @@ export function initStartScreen(onPlay: () => void, signal: AbortSignal): void {
  * Reveals the settings screen.
  */
 export function showSettingsScreen(): void {
+  prepareSettingsScreen();
   document.getElementById('settings-screen')?.classList.remove('hidden');
 }
 
