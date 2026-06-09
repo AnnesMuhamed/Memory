@@ -15,6 +15,7 @@ import './settings.scss';
 
 import {
   bindSettingsHover,
+  clearGroupHoverForInput,
   clearSettingsHover,
   getPreviewBoardSize,
   getPreviewPlayer,
@@ -134,6 +135,7 @@ function bindSettingsStart(onStart: () => void, startButton: HTMLElement, signal
  */
 function handleSettingsChange(startButton: HTMLElement, input: HTMLInputElement): void {
   updateSettings(input);
+  clearGroupHoverForInput(input);
   updateFooter();
   updateStartButton(startButton);
   updatePreview();

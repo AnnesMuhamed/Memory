@@ -110,22 +110,45 @@
         flex-shrink: 0;
     }
 
-    &:hover &__label,
-    &:has(&__input:checked) &__label {
-        font-weight: 700;
-    }
+}
 
-    &:hover &__line,
-    &:has(&__input:checked) &__line {
-        opacity: 1;
-    }
+.settings-group__options:not(.settings-group__options--is-hovering) {
+    .settings-option:has(.settings-option__input:checked) {
+        .settings-option__label {
+            font-weight: 700;
+        }
 
-    &:has(&__input:checked) &__radio--unchecked {
-        display: none;
-    }
+        .settings-option__line {
+            opacity: 1;
+        }
 
-    &:has(&__input:checked) &__radio--checked {
-        display: block;
+        .settings-option__radio--unchecked {
+            display: none;
+        }
+
+        .settings-option__radio--checked {
+            display: block;
+        }
+    }
+}
+
+.settings-group__options--is-hovering {
+    .settings-option--preview {
+        .settings-option__label {
+            font-weight: 700;
+        }
+
+        .settings-option__line {
+            opacity: 1;
+        }
+
+        .settings-option__radio--unchecked {
+            display: none;
+        }
+
+        .settings-option__radio--checked {
+            display: block;
+        }
     }
 }
 

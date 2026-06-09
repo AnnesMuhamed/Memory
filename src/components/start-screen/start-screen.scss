@@ -72,8 +72,14 @@ $controller-lift-offset-y: -6px;
     }
 }
 
+$play-hover-duration: 0.65s;
+$play-hover-easing: cubic-bezier(0.16, 1, 0.3, 1);
+$play-hover-lift: -7px;
+$play-hover-scale: 1.07;
+
 .play-button {
     align-self: center;
+    position: relative;
     margin-top: clamp(8px, 2vw, 22px);
     width: 270px;
     height: 102px;
@@ -82,12 +88,27 @@ $controller-lift-offset-y: -6px;
     cursor: pointer;
     background: url("/images/cards/play.svg") center / contain no-repeat;
     background-color: transparent;
-    transition: transform 180ms ease, filter 180ms ease;
+    transition:
+        transform $play-hover-duration $play-hover-easing,
+        filter $play-hover-duration $play-hover-easing;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("/images/cards/play_hoveer.svg") center / contain no-repeat;
+        opacity: 0;
+        transition: opacity $play-hover-duration $play-hover-easing;
+        pointer-events: none;
+    }
 
     &:hover {
-        background-image: url("/images/cards/play_hoveer.svg");
-        transform: translateY(-1px);
-        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.25));
+        transform: translateY($play-hover-lift) scale($play-hover-scale);
+        filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.32));
+
+        &::after {
+            opacity: 1;
+        }
     }
 
     &:focus-visible {
@@ -99,6 +120,11 @@ $controller-lift-offset-y: -6px;
 @media (prefers-reduced-motion: reduce) {
     .home-screen__controller {
         animation: none;
+    }
+
+    .play-button,
+    .play-button::after {
+        transition: none;
     }
 }
 

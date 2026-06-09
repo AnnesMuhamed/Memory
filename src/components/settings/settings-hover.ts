@@ -20,10 +20,13 @@ export function bindSettingsHover(onHoverChange: () => void, signal: AbortSignal
       },
       { signal },
     );
-    option.addEventListener(
+  });
+
+  document.querySelectorAll<HTMLElement>('.settings-group__options').forEach((group) => {
+    group.addEventListener(
       'mouseleave',
       () => {
-        clearOptionHover(option);
+        clearGroupHover(group);
         onHoverChange();
       },
       { signal },
@@ -38,6 +41,21 @@ export function clearSettingsHover(): void {
   hoveredTheme = null;
   hoveredPlayer = null;
   hoveredBoardSize = null;
+  document.querySelectorAll<HTMLElement>('.settings-group__options').forEach((group) => {
+    clearGroupHover(group);
+  });
+}
+
+/**
+ * Clears hover preview styling for the group that contains an input.
+ *
+ * @param input - The settings radio input that was selected.
+ */
+export function clearGroupHoverForInput(input: HTMLInputElement): void {
+  const group = input.closest('.settings-group__options');
+  if (group instanceof HTMLElement) {
+    clearGroupHover(group);
+  }
 }
 
 /**
@@ -77,23 +95,31 @@ export function getPreviewBoardSize(selectedBoardSize: BoardSize | null): BoardS
  */
 function applyOptionHover(option: HTMLLabelElement): void {
   const input = option.querySelector<HTMLInputElement>('.settings-option__input');
-  if (!input) {
+  const group = option.closest('.settings-group__options');
+  if (!input || !group) {
     return;
   }
   setHoverValue(input.name, input.value);
+  group.classList.add('settings-group__options--is-hovering');
+  group.querySelectorAll<HTMLElement>('.settings-option').forEach((item) => {
+    item.classList.toggle('settings-option--preview', item === option);
+  });
 }
 
 /**
- * Clears hover preview state for a settings option input.
+ * Clears hover preview styling for a settings option group.
  *
- * @param option - The settings option label that is no longer hovered.
+ * @param group - The settings option group container.
  */
-function clearOptionHover(option: HTMLLabelElement): void {
-  const input = option.querySelector<HTMLInputElement>('.settings-option__input');
-  if (!input) {
-    return;
+function clearGroupHover(group: HTMLElement): void {
+  const fieldInput = group.querySelector<HTMLInputElement>('.settings-option__input');
+  if (fieldInput) {
+    clearHoverValue(fieldInput.name);
   }
-  clearHoverValue(input.name);
+  group.classList.remove('settings-group__options--is-hovering');
+  group.querySelectorAll('.settings-option--preview').forEach((item) => {
+    item.classList.remove('settings-option--preview');
+  });
 }
 
 /**
