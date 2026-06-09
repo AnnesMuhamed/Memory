@@ -13,6 +13,14 @@ import { settings, SETTINGS_STORAGE_KEY } from '../../state/settings';
 
 import './settings.scss';
 
+import {
+  bindSettingsHover,
+  clearSettingsHover,
+  getPreviewBoardSize,
+  getPreviewPlayer,
+  getPreviewTheme,
+} from './settings-hover';
+
 const DEFAULT_THEME: Theme = 'code-vibes';
 
 /**
@@ -27,6 +35,7 @@ export function initSettings(onStart: () => void, signal: AbortSignal): void {
     return;
   }
   bindSettingsInputs(startButton, signal);
+  bindSettingsHover(refreshFooterAndPreview, signal);
   bindSettingsStart(onStart, startButton, signal);
 }
 
@@ -53,6 +62,7 @@ export function resetSettings(startButton: HTMLElement): void {
   resetSettingsState();
   resetSettingsInputs();
   clearGameStorage();
+  clearSettingsHover();
   selectTheme(DEFAULT_THEME);
   refreshSettingsUi(startButton);
 }
@@ -200,9 +210,12 @@ function updateFooterLabels(): void {
   if (!themeLabel || !playerLabel || !boardLabel) {
     return;
   }
-  themeLabel.textContent = settings.theme ? THEME_LABELS[settings.theme] : 'Theme';
-  playerLabel.textContent = settings.player ? PLAYER_LABELS[settings.player] : 'Player';
-  boardLabel.textContent = settings.boardSize ? BOARD_LABELS[settings.boardSize] : 'Board size';
+  const theme = getPreviewTheme(settings.theme);
+  const player = getPreviewPlayer(settings.player);
+  const boardSize = getPreviewBoardSize(settings.boardSize);
+  themeLabel.textContent = theme ? THEME_LABELS[theme] : 'Theme';
+  playerLabel.textContent = player ? PLAYER_LABELS[player] : 'Player';
+  boardLabel.textContent = boardSize ? BOARD_LABELS[boardSize] : 'Board size';
 }
 
 /**
@@ -225,10 +238,10 @@ function updateFooterSlashes(): void {
  */
 function isFooterFieldSelected(field: string | undefined): boolean {
   if (field === 'theme') {
-    return settings.theme !== null;
+    return getPreviewTheme(settings.theme) !== null;
   }
   if (field === 'player') {
-    return settings.player !== null;
+    return getPreviewPlayer(settings.player) !== null;
   }
   return false;
 }
@@ -241,13 +254,22 @@ function updatePreview(): void {
   if (!previewImage) {
     return;
   }
-  if (settings.theme) {
-    previewImage.src = THEME_PREVIEW_IMAGES[settings.theme];
+  const theme = getPreviewTheme(settings.theme);
+  if (theme) {
+    previewImage.src = THEME_PREVIEW_IMAGES[theme];
     previewImage.hidden = false;
     return;
   }
   previewImage.hidden = true;
   previewImage.removeAttribute('src');
+}
+
+/**
+ * Refreshes footer labels and theme preview after hover changes.
+ */
+function refreshFooterAndPreview(): void {
+  updateFooter();
+  updatePreview();
 }
 
 /**
