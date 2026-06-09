@@ -29,11 +29,14 @@ export function createCardElement(cardData: MemoryCard, theme: Theme): HTMLButto
  * @returns The inner card container element.
  */
 function buildCardInner(cardData: MemoryCard, theme: Theme): HTMLDivElement {
+  const perspective = document.createElement('div');
+  perspective.className = 'game-card__perspective';
   const inner = document.createElement('div');
   inner.className = 'game-card__inner';
   inner.appendChild(buildCardFace('front', cardData.symbolSrc));
   inner.appendChild(buildCardFace('back', CARD_BACK_IMAGES[theme]));
-  return inner;
+  perspective.appendChild(inner);
+  return perspective;
 }
 
 /**
@@ -50,6 +53,7 @@ function buildCardFace(side: 'front' | 'back', imageSrc: string): HTMLDivElement
   image.src = imageSrc;
   image.alt = '';
   image.setAttribute('aria-hidden', 'true');
+  image.draggable = false;
   face.appendChild(image);
   return face;
 }

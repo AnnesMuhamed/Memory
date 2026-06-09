@@ -3,7 +3,7 @@ import type { BoardSize, Theme } from '../../../types/game';
 import { BOARD_COLUMNS } from '../../../constants/assets';
 import { settings } from '../../../state/settings';
 
-import { handleMemoryCardClick } from './memory-board-click';
+import { handleMemoryCardClick, handleMemoryCardKeydown } from './memory-board-click';
 import { createCardElement } from './memory-card';
 import {
   getBoardAbortController,
@@ -89,4 +89,5 @@ function attachBoardClickListener(board: HTMLElement): void {
   const controller = new AbortController();
   setBoardAbortController(controller);
   board.addEventListener('click', handleMemoryCardClick, { signal: controller.signal });
+  board.addEventListener('keydown', handleMemoryCardKeydown, { signal: controller.signal });
 }

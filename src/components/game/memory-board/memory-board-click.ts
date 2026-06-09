@@ -34,18 +34,42 @@ export function handleMemoryCardClick(event: Event): void {
 }
 
 /**
+ * Flips a card when Enter or Space is pressed on a focused card button.
+ *
+ * @param event - The keyboard event from the game board.
+ */
+export function handleMemoryCardKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'Enter' && event.key !== ' ') {
+    return;
+  }
+  const target = event.target;
+  if (!(target instanceof Element) || !target.classList.contains('game-card')) {
+    return;
+  }
+  event.preventDefault();
+  handleMemoryCardClick(event);
+}
+
+/**
  * Reads the card ID from a click event target.
  *
  * @param event - The click event from the game board.
  * @returns The card ID, or null when no valid card was clicked.
  */
 function getClickedCardId(event: Event): number | null {
-  const target = event.target as HTMLElement;
+  const target = event.target;
+  if (!(target instanceof Element)) {
+    return null;
+  }
   const cardButton = target.closest('.game-card') as HTMLButtonElement | null;
   if (!cardButton || cardButton.disabled) {
     return null;
   }
-  return Number(cardButton.id.replace('game-card-', ''));
+  const cardId = Number(cardButton.id.replace('game-card-', ''));
+  if (Number.isNaN(cardId)) {
+    return null;
+  }
+  return cardId;
 }
 
 /**
