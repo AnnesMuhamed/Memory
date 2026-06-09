@@ -76,17 +76,17 @@ export function updateCardFlipState(cardId: number, flipped: boolean, symbolId: 
 }
 
 /**
- * Marks a matched card as disabled and leaves an empty grid slot.
+ * Marks a matched card as disabled while keeping it face-up on the board.
  *
  * @param cardId - The ID of the matched card.
+ * @param symbolId - The symbol ID used for the aria label.
  */
-export function markCardAsMatchedSlot(cardId: number): void {
+export function markCardAsMatchedSlot(cardId: number, symbolId: string): void {
   const cardButton = getCardButton(cardId);
   if (!cardButton) {
     return;
   }
   cardButton.classList.add('game-card--flipped', 'game-card--matched');
   cardButton.disabled = true;
-  cardButton.setAttribute('aria-label', 'Empty slot');
-  cardButton.setAttribute('aria-hidden', 'true');
+  cardButton.setAttribute('aria-label', `Matched ${symbolId} card`);
 }

@@ -190,12 +190,6 @@
         &.game-card--matched {
             pointer-events: none;
             cursor: default;
-            visibility: visible;
-
-            .game-card__inner {
-                opacity: 0;
-                transition: opacity 0.25s ease;
-            }
         }
     }
 

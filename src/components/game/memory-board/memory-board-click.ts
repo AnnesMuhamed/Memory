@@ -187,7 +187,7 @@ function markPairAsMatched(cardId: number): void {
   }
   card.isMatched = true;
   card.isFlipped = true;
-  markCardAsMatchedSlot(cardId);
+  markCardAsMatchedSlot(cardId, card.symbolId);
 }
 
 /**
