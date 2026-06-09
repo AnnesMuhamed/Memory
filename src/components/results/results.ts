@@ -1,6 +1,7 @@
 import type { GameOutcome, Player, ResultsThemeAssets, Theme } from '../../types/game';
 
 import { RESULTS_THEME_ASSETS } from '../../constants/assets';
+import { GAME_OVER_TO_WINNER_DELAY_MS } from '../../constants/timing';
 import { gameState } from '../../state/game-state';
 import { settings } from '../../state/settings';
 import { clearGameBoard, resetExitButton } from '../game/game';
@@ -13,6 +14,8 @@ import { resetWinnerPanel, showWinnerPanel } from './winner/winner';
 
 import './results.scss';
 import './gaming-theme/gaming-theme.scss';
+
+let winnerRevealTimeoutId: number | null = null;
 
 /**
  * Registers the back button handler on the results screen.
@@ -71,12 +74,20 @@ export function backToStart(): void {
  *
  * @returns `'win'`, `'lose'`, or `'draw'` based on final scores.
  */
+function getWinner(): Player {
+  return gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
+}
+
+/**
+ * Calculates the game outcome relative to the selected player.
+ *
+ * @returns `'win'`, `'lose'`, or `'draw'` based on final scores.
+ */
 function getGameOutcome(): GameOutcome {
   if (gameState.blueScore === gameState.orangeScore) {
     return 'draw';
   }
-  const winner: Player = gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
-  if (settings.player === winner) {
+  if (settings.player === getWinner()) {
     return 'win';
   }
   return 'lose';
@@ -90,8 +101,7 @@ function getGameOutcome(): GameOutcome {
  */
 function showOutcomePanel(outcome: GameOutcome, themeAssets: ResultsThemeAssets): void {
   if (outcome === 'win') {
-    const winner: Player = gameState.blueScore > gameState.orangeScore ? 'blue' : 'orange';
-    showWinnerPanel(themeAssets, winner);
+    showWinnerPanel(themeAssets, getWinner());
     return;
   }
   if (outcome === 'draw') {
@@ -99,6 +109,32 @@ function showOutcomePanel(outcome: GameOutcome, themeAssets: ResultsThemeAssets)
     return;
   }
   showGameOverPanel();
+  scheduleWinnerRevealAfterGameOver(themeAssets);
+}
+
+/**
+ * Reveals the winner panel after the game over screen has been shown.
+ *
+ * @param themeAssets - Asset URLs for the active theme.
+ */
+function scheduleWinnerRevealAfterGameOver(themeAssets: ResultsThemeAssets): void {
+  clearWinnerRevealTimeout();
+  winnerRevealTimeoutId = window.setTimeout(() => {
+    hideGameOverPanel();
+    showWinnerPanel(themeAssets, getWinner());
+    winnerRevealTimeoutId = null;
+  }, GAME_OVER_TO_WINNER_DELAY_MS);
+}
+
+/**
+ * Cancels a pending winner reveal after game over.
+ */
+function clearWinnerRevealTimeout(): void {
+  if (winnerRevealTimeoutId === null) {
+    return;
+  }
+  window.clearTimeout(winnerRevealTimeoutId);
+  winnerRevealTimeoutId = null;
 }
 
 /**
@@ -146,6 +182,7 @@ function applyResultsBackButton(theme: Theme): void {
  * Hides all result panels before showing a new outcome.
  */
 function hideAllResultPanels(): void {
+  clearWinnerRevealTimeout();
   resetWinnerPanel();
   hideDrawPanel();
   hideGameOverPanel();
